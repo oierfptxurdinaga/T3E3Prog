@@ -12,6 +12,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+/**
+ * Ikuspegiaren (View) geruzako klasea.
+ * Aplikazioko talde guztiak sare (grid) formatuan erakusten dituen panela kudeatzen du.
+ * Talde bakoitzaren armarria botoi gisa erakusten da, eta bertan klik egitean, 
+ * talde horretako jokalarien zerrenda bistaratzen du leiho gainerakor (pop-up) batean.
+ */
 public class TaldeakMetodo implements ActionListener {
 
 	private JPanel taldeakPanela;
@@ -27,6 +33,12 @@ public class TaldeakMetodo implements ActionListener {
 	private TaldeaDAO taldeaDAO;
 	private JokalariaDAO jokalariaDAO;
 
+	/**
+	 * TaldeakMetodo klasearen eraikitzailea.
+	 * Panela hasieratzen du, datu-basetik talde guztiak lortzen ditu eta bakoitzarentzat 
+	 * botoi grafiko bat (armarriarekin) sortzen du sare (grid) egitura batean.
+	 * @param kolorea Aplikazioaren atzeko planoaren kolore nagusia.
+	 */
 	public TaldeakMetodo(Color kolorea) {
 		taldeaDAO = new TaldeaDAO();
 		jokalariaDAO = new JokalariaDAO();
@@ -59,6 +71,13 @@ public class TaldeakMetodo implements ActionListener {
 		taldeakPanela.add(saioaAmaituBotoia);
 	}
 
+	/**
+	 * Talde baten botoi grafikoa sortzen du, bere izena eta armarria (logoa) ezarriz.
+	 * @param izena Taldearen izena, botoiaren testuan erakusteko.
+	 * @param logoBidea Armarriaren irudiaren fitxategi-bidea (fitxategi-sistematik edo baliabideetatik kargatzeko).
+	 * @param taldeKod Taldearen identifikatzailea (ID-a), jokalariak bilatzeko erabiliko dena.
+	 * @return Konfiguratutako {@link JButton} objektua, klik egiterakoan jokalariak erakutsiko dituena.
+	 */
 	private JButton taldeBotoiaSortu(String izena, String logoBidea, int taldeKod) {
 		JButton botoia = new JButton(izena);
 		try {
@@ -110,6 +129,13 @@ public class TaldeakMetodo implements ActionListener {
 		return botoia;
 	}
 
+	/**
+	 * Talde jakin bateko jokalarien zerrenda lortzen du datu-basetik eta 
+	 * mezu-leiho batean (JOptionPane) bistaratzen ditu zerrenda korrigarri (JScrollPane) batean.
+	 * @param taldeKod Taldearen identifikatzailea, jokalariak iragazteko.
+	 * @param taldeIzena Taldearen izena, leihoaren izenburuan erakusteko.
+	 * @throws Exception Datu-basetik jokalariak lortzerakoan erroren bat gertatzen bada.
+	 */
 	private void erakutsiJokalariak(int taldeKod, String taldeIzena) throws Exception {
 		List<Jokalaria> jokalariak = jokalariaDAO.jokalariaLortuTaldeBidez(taldeKod);
 
@@ -134,10 +160,20 @@ public class TaldeakMetodo implements ActionListener {
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * TaldeakMetodo klaseak sortutako panel nagusia itzultzen du, 
+	 * aplikazioaren leiho nagusian txertatu ahal izateko.
+	 * @return Taldeak ikusteko pantailako {@link JPanel} objektua.
+	 */
 	public JPanel getPanela() {
 		return taldeakPanela;
 	}
 
+	/**
+	 * "Saioa amaitu" botoiaren klikak kudeatzen ditu.
+	 * Uneko leihoa ixten du eta berriro saioa hasteko pantaila (Login) irekitzen du.
+	 * @param e Botoiaren sakatze-gertaera.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		try {

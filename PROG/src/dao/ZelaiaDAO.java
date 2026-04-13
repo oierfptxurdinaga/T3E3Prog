@@ -7,19 +7,26 @@ import java.util.List;
 import pojos.Zelaia;
 
 /**
+ * Zelaia entitatearentzako Datuetarako Sarbide Objektua (DAO).
  * Zelaia taularen gaineko CRUD operazioak kudeatzen dituen klasea.
+ * Datu-basean zelaiekin lotutako irakurketa eragiketak kudeatzen ditu.
  */
 public class ZelaiaDAO {
 
     private Konexioa konexioa;
 
+    /**
+     * ZelaiaDAO klasearen eraikitzailea.
+     * Datu-basearekiko konexioa kudeatuko duen objektua hasieratzen du.
+     */
     public ZelaiaDAO() {
         konexioa = new Konexioa();
     }
 
     /**
+     * Datu-basean erregistratuta dauden zelaia guztiak lortzen ditu.
      * Zelaia guztiak lortzen ditu.
-     * @return Zelaien zerrenda
+     * * @return Datu-basetik irakurritako {@link Zelaia} objektuen zerrenda (List).
      */
     public List<Zelaia> zelaiGutziakLortu() {
         List<Zelaia> zerrenda = new ArrayList<>();

@@ -29,9 +29,8 @@ import dao.Konexioa;
 
 /**
  * Login leihoa - Erabiltzailearen saioa hasteko interfazea.
- * 
- * JFrame oinarrian, erabiltzaile izena eta pasahitza sartzeko eremuak ditu,
- * baita pasahitza erakusteko botoia, saioa hasteko eta irteteko botoiak.
+ * * JFrame oinarrian, erabiltzaile izena eta pasahitza sartzeko eremuak ditu,
+ * baita pasahitza erakusteko botoia, saioa hasteko, erregistratzeko eta irteteko botoiak.
  */
 public class Login extends JFrame implements ActionListener, MouseListener {
 
@@ -60,7 +59,8 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 	private PrintWriter logger;
 
 	/**
-	 * Eraikitzailea - Leihoa konfiguratu eta osagaiak gehitzen ditu.
+	 * Eraikitzailea - Leihoa konfiguratu eta osagai grafiko guztiak gehitzen ditu.
+	 * Datu-basearekiko konexioa prestatzen du eta logger-a martxan jartzen du.
 	 */
 	public Login() {
 		// Framearen izena jarri
@@ -192,8 +192,7 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 
 	/**
 	 * Main metodoa aplikazioa abiarazteko.
-	 * 
-	 * @param args Komando lerroko argumentuak (ez dira erabiltzen)
+	 * * @param args Komando lerroko argumentuak (ez dira erabiltzen)
 	 */
 	public static void main(String[] args) {
 		try {
@@ -223,8 +222,8 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 
 	/**
 	 * Mezu bat idazten du log fitxategian.
-	 * 
-	 * @param message Log-ean idazteko mezua
+	 * * @param izena Ekintzaren arduraduna edo etiketa (adib. erabiltzaile izena).
+	 * @param mezua Log-ean idazteko xehetasun mezua.
 	 */
 	private void log(String izena, String mezua) {
 		if (logger != null) {
@@ -243,7 +242,9 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Pasahitza erakutsi sakatuta dagoenean
+	 * Pasahitza erakutsi sakatuta dagoenean exekutatzen da.
+	 * Pasahitzaren karaktereak ikusgarri bihurtzen ditu.
+	 * * @param e Saguaren gertaera.
 	 */
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -257,7 +258,9 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Pasahitza ezkutatu botoia utzi denean
+	 * Pasahitza erakutsi botoia askatu denean exekutatzen da.
+	 * Pasahitza berriro ezkutatzen du asteriskoak erabiliz.
+	 * * @param e Saguaren gertaera.
 	 */
 	@Override
 	public void mouseReleased(MouseEvent e) {
@@ -283,7 +286,9 @@ public class Login extends JFrame implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Botoiei funtzionalitate dezberdinak emateko
+	 * Botoiei funtzionalitate ezberdinak emateko metodoa.
+	 * Saioa hasteko, erregistratzeko eta aplikaziotik irteteko ekintzak kudeatzen ditu.
+	 * * @param e Botoiaren sakatze-gertaera.
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

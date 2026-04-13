@@ -7,13 +7,28 @@ import java.util.List;
 import pojos.Taldea;
 import pojos.Zelaia;
 
+/**
+ * Taldea entitatearentzako Datuetarako Sarbide Objektua (DAO).
+ * Datu-basean taldeekin lotutako eragiketak kudeatzen ditu:
+ * taldeak sortu, zerrendatu, ID bidez bilatu, eguneratu eta ezabatu.
+ */
 public class TaldeaDAO {
 	private Konexioa konexioa; // Datu-basearekin konektatzeko objektua
 
+	/**
+	 * TaldeaDAO klasearen eraikitzailea.
+	 * Datu-basearekiko konexioa kudeatuko duen objektua hasieratzen du.
+	 */
 	public TaldeaDAO() {
 		konexioa = new Konexioa(); 
 	}
 
+	/**
+	 * Talde berri bat txertatzen du datu-basean.
+	 * Bere izena, sortze-data eta zelaia (baditu) gordetzen ditu.
+	 * @param taldea Gorde nahi den {@link Taldea} objektua.
+	 * @return true txertaketa ondo burutu bada, false arazoren bat egon bada.
+	 */
 	// Talde berri bat sortzeko metodoa
 	public boolean taldeaSortu(Taldea taldea) {
 		String sql = "INSERT INTO taldea (izena, sortze_data, zelaia) VALUES (?, ?, ?)";
@@ -57,6 +72,11 @@ public class TaldeaDAO {
 		}
 	}
 
+	/**
+	 * Datu-basean dauden talde guztiak eskuratzen ditu, bakoitzaren zelaiaren
+	 * datuekin batera (honi esleitutako zelairik badago).
+	 * @return {@link Taldea} objektuen zerrenda bat.
+	 */
 	// Talde guztiak lortu (eta zelaiarekin batera)
 	public List<Taldea> taldeGuztiakLortu() {
 		List<Taldea> zerrenda = new ArrayList<>();
@@ -100,6 +120,12 @@ public class TaldeaDAO {
 		return zerrenda;
 	}
 
+	/**
+	 * Talde zehatz bat bilatzen du datu-basean bere identifikatzailearen arabera,
+	 * zelaiaren datuekin batera.
+	 * @param taldeaKod Bilatu nahi den taldearen identifikatzailea (ID).
+	 * @return Datu-basetik irakurritako {@link Taldea} objektua, edo null ez bada aurkitzen.
+	 */
 	// Talde bat IDaren arabera lortu
 	public Taldea TaldeLortuIdBidez(int taldeaKod) {
 		Taldea taldea = null;
@@ -141,6 +167,11 @@ public class TaldeaDAO {
 		return taldea;
 	}
 
+	/**
+	 * Existitzen den talde baten datuak eguneratzen ditu datu-basean.
+	 * @param taldea Eguneratu nahi diren datu berriak dituen {@link Taldea} objektua.
+	 * @return true eguneraketa modu egokian burutu bada, false arazoren bat egon bada.
+	 */
 	// Talde baten datuak eguneratu
 	public boolean TaldeaEguneratu(Taldea taldea) {
 		String sql = "UPDATE taldea SET izena = ?, sortze_data = ?, zelaia = ? WHERE taldea_kod = ?";
@@ -179,6 +210,11 @@ public class TaldeaDAO {
 		}
 	}
 
+	/**
+	 * Talde zehatz bat datu-basetik guztiz ezabatzen du bere IDa erabiliz.
+	 * @param taldeaKod Ezabatu nahi den taldearen identifikatzailea (ID).
+	 * @return true ezabaketa ondo burutu bada, false arazoren bat egon bada.
+	 */
 	// Talde bat ezabatu
 	public boolean TaldeEzabatu(int taldeaKod) {
 		String sql = "DELETE FROM taldea WHERE taldea_kod = ?";

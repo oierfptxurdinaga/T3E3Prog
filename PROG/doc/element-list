@@ -1,3 +1,4 @@
-module:Erronka2Talde3
-Erronka2.model
-Erronka2.view
+dao
+model
+pojos
+view

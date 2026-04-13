@@ -3,67 +3,67 @@
     <taldea>
         <posizioa>1</posizioa>
         <izena>Txurdinaga Harriak</izena>
-        <pj>2</pj>
-        <pg>2</pg>
-        <pp>0</pp>
-        <puntuak>6</puntuak>
-        <si>6</si>
-        <sg>3</sg>
-        <sd>3</sd>
-    </taldea>
-    <taldea>
-        <posizioa>2</posizioa>
-        <izena>Usansolo Ortzadak</izena>
-        <pj>2</pj>
-        <pg>1</pg>
-        <pp>1</pp>
-        <puntuak>3</puntuak>
-        <si>4</si>
-        <sg>3</sg>
-        <sd>1</sd>
-    </taldea>
-    <taldea>
-        <posizioa>3</posizioa>
-        <izena>Otxarkoaga Distira</izena>
         <pj>1</pj>
         <pg>1</pg>
         <pp>0</pp>
         <puntuak>3</puntuak>
         <si>3</si>
-        <sg>2</sg>
-        <sd>1</sd>
+        <sg>1</sg>
+        <sd>2</sd>
+    </taldea>
+    <taldea>
+        <posizioa>2</posizioa>
+        <izena>Miribilla Uhinen Jokoak</izena>
+        <pj>0</pj>
+        <pg>0</pg>
+        <pp>0</pp>
+        <puntuak>0</puntuak>
+        <si>0</si>
+        <sg>0</sg>
+        <sd>0</sd>
+    </taldea>
+    <taldea>
+        <posizioa>3</posizioa>
+        <izena>Usansolo Ortzadak</izena>
+        <pj>0</pj>
+        <pg>0</pg>
+        <pp>0</pp>
+        <puntuak>0</puntuak>
+        <si>0</si>
+        <sg>0</sg>
+        <sd>0</sd>
     </taldea>
     <taldea>
         <posizioa>4</posizioa>
-        <izena>Matiko Txirrindulariak</izena>
-        <pj>3</pj>
-        <pg>1</pg>
-        <pp>2</pp>
-        <puntuak>3</puntuak>
-        <si>7</si>
-        <sg>7</sg>
+        <izena>Santutxu Haizeak</izena>
+        <pj>0</pj>
+        <pg>0</pg>
+        <pp>0</pp>
+        <puntuak>0</puntuak>
+        <si>0</si>
+        <sg>0</sg>
         <sd>0</sd>
     </taldea>
     <taldea>
         <posizioa>5</posizioa>
-        <izena>Santutxu Haizeak</izena>
-        <pj>2</pj>
-        <pg>1</pg>
-        <pp>1</pp>
-        <puntuak>3</puntuak>
-        <si>5</si>
-        <sg>5</sg>
+        <izena>Otxarkoaga Distira</izena>
+        <pj>0</pj>
+        <pg>0</pg>
+        <pp>0</pp>
+        <puntuak>0</puntuak>
+        <si>0</si>
+        <sg>0</sg>
         <sd>0</sd>
     </taldea>
     <taldea>
         <posizioa>6</posizioa>
-        <izena>Miribilla Uhinen Jokoak</izena>
-        <pj>2</pj>
+        <izena>Matiko Txirrindulariak</izena>
+        <pj>1</pj>
         <pg>0</pg>
-        <pp>2</pp>
+        <pp>1</pp>
         <puntuak>0</puntuak>
         <si>1</si>
-        <sg>6</sg>
-        <sd>-5</sd>
+        <sg>3</sg>
+        <sd>-2</sd>
     </taldea>
 </klasifikazioa>

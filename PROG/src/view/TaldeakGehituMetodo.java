@@ -15,6 +15,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Ikuspegiaren (View) geruzako klasea.
+ * Talde berri bat datu-basean erregistratzeko interfaze grafikoa ordezkatzen du.
+ * Formulario bat eskaintzen du taldearen izena, sortze-data, zelaia eta 
+ * armarria (eskudoa) aukeratzeko eta gordetzeko.
+ */
 public class TaldeakGehituMetodo implements ActionListener {
 
 	private JPanel panela;
@@ -32,11 +38,20 @@ public class TaldeakGehituMetodo implements ActionListener {
 	private JLabel izenaLabel;
 	private JLabel sortzeDataLabel;
 	private JLabel zelaiaLabel;
-	private JLabel eskudoaLabel;
+	private JLabel eskudoaLabel;      // Muestra texto o miniatura del escudo
 
 	private TaldeaDAO taldeaDAO;
 	private ZelaiaDAO zelaiaDAO;
 
+	// Ruta absoluta del archivo de escudo seleccionado (para luego copiarlo)
+	private String aukeratutakoEskudoaPath = null;
+
+	/**
+	 * TaldeakGehituMetodo klasearen eraikitzailea.
+	 * Formularioaren osagai grafiko guztiak (etiketak, testu-eremuak, goitibeherako menuak eta botoiak) 
+	 * hasieratzen ditu, eta eskuragarri dauden zelaien zerrenda kargatzen du datu-basetik.
+	 * @param kolorea Aplikazioaren diseinuari dagokion atzeko planoaren kolorea.
+	 */
 	public TaldeakGehituMetodo(Color kolorea) {
 		taldeaDAO = new TaldeaDAO();
 		zelaiaDAO = new ZelaiaDAO();
@@ -98,20 +113,24 @@ public class TaldeakGehituMetodo implements ActionListener {
 		panela.add(zelaiaCombo);
 		y += rowHeight;
 
+		// Botoia eskudoa aukeratzeko
 		eskudoaBotoia = new JButton("Aukeratu eskudoa");
 		eskudoaBotoia.setFont(new Font("Arial", Font.BOLD, 14));
 		eskudoaBotoia.setBounds(fieldX, y, 200, 35);
 		eskudoaBotoia.addActionListener(this);
-
 		panela.add(eskudoaBotoia);
 
+		// Etiketa eskudoaren informazioa / miniatura erakusteko
 		eskudoaLabel = new JLabel("Ez da eskudoirik hautatu");
 		eskudoaLabel.setForeground(Color.LIGHT_GRAY);
 		eskudoaLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-		eskudoaLabel.setBounds(fieldX, y + 40, 250, 20);
+		eskudoaLabel.setBounds(fieldX, y + 40, 250, 50); // Altura suficiente para miniatura
+		eskudoaLabel.setHorizontalAlignment(SwingConstants.LEFT);
+		eskudoaLabel.setVerticalAlignment(SwingConstants.CENTER);
 		panela.add(eskudoaLabel);
-		y += 60;
+		y += 70;
 
+		// Gorde botoia
 		gordeBotoia = new JButton("Gorde");
 		gordeBotoia.setFont(new Font("Arial", Font.BOLD, 16));
 		gordeBotoia.setBackground(new Color(0, 150, 0));
@@ -120,20 +139,37 @@ public class TaldeakGehituMetodo implements ActionListener {
 		gordeBotoia.addActionListener(e -> gordeTaldea());
 		panela.add(gordeBotoia);
 
+		// Ezeztatu botoia
 		ezeztatuBotoia = new JButton("Ezeztatu");
 		ezeztatuBotoia.setFont(new Font("Arial", Font.BOLD, 16));
 		ezeztatuBotoia.setBackground(Color.RED);
 		ezeztatuBotoia.setForeground(Color.WHITE);
 		ezeztatuBotoia.setBounds(470, y, 150, 40);
-		ezeztatuBotoia.addActionListener(e -> {
-			izenaField.setText("");
-			sortzeDataField.setText("");
-			zelaiaCombo.setSelectedIndex(0);
-			eskudoaLabel.setText("Ez da eskudoirik hautatu");
-		});
+		ezeztatuBotoia.addActionListener(e -> garbituFormularioa());
 		panela.add(ezeztatuBotoia);
 	}
 
+	/**
+	 * Formularioa hasierako egoerara itzultzen du:
+	 * testu-eremuak, konbinazio-koadroa, eta eskudoaren aukeraketa garbitzen ditu.
+	 */
+	private void garbituFormularioa() {
+		izenaField.setText("");
+		sortzeDataField.setText("");
+		zelaiaCombo.setSelectedIndex(0);
+		// Garbitu eskudoaren datuak
+		aukeratutakoEskudoaPath = null;
+		eskudoaLabel.setIcon(null);
+		eskudoaLabel.setText("Ez da eskudoirik hautatu");
+		eskudoaLabel.setForeground(Color.LIGHT_GRAY);
+	}
+
+	/**
+	 * Formularioan sartutako datuak balioztatzen ditu eta talde berria datu-basean gordetzen du.
+	 * Datuen formatua egiaztatzen du (bereziki dataren formatua: yyyy-MM-dd) eta hutsik 
+	 * egon ezin diren eremuak kontrolatzen ditu. Dena zuzen badago, DAO-ari deitzen dio txertaketa egiteko.
+	 * Eskudoa hautatu bada, irudia kopiatu eta gorde egiten da.
+	 */
 	private void gordeTaldea() {
 		try {
 			// Balidatu hutsik ez huzteko
@@ -168,9 +204,32 @@ public class TaldeakGehituMetodo implements ActionListener {
 				throw new Exception("Errorea taldea gordetzean.");
 			}
 
+			// Eskudoa gordetzea (aukeratu bada)
+			if (aukeratutakoEskudoaPath != null && !aukeratutakoEskudoaPath.isEmpty()) {
+				try {
+					String karpetaPath = "images/LogosEquipos";
+					java.io.File karpeta = new java.io.File(karpetaPath);
+					if (!karpeta.exists()) {
+						karpeta.mkdirs();
+					}
+					java.io.File jatorrizkoa = new java.io.File(aukeratutakoEskudoaPath);
+					String izenBerria = t.getIzena().replace(" ", "") + "_" + System.currentTimeMillis() + 
+							aukeratutakoEskudoaPath.substring(aukeratutakoEskudoaPath.lastIndexOf('.'));
+					java.io.File destino = new java.io.File(karpeta, izenBerria);
+					java.nio.file.Files.copy(jatorrizkoa.toPath(), destino.toPath(),
+							java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+					System.out.println("Eskudoa gorde da: " + destino.getAbsolutePath());
+					// (Opcional) Aquí podrías guardar la ruta en la base de datos si la tabla lo soporta
+				} catch (Exception ex) {
+					JOptionPane.showMessageDialog(panela, "Errorea eskudoa gordetzean: " + ex.getMessage(),
+							"Errorea", JOptionPane.ERROR_MESSAGE);
+					ex.printStackTrace();
+				}
+			}
+
 			JOptionPane.showMessageDialog(panela, "Taldea ondo gorde da.", "Ondo", JOptionPane.INFORMATION_MESSAGE);
-			// Garbitu kanpoak
-			ezeztatuBotoia.doClick();
+			// Garbitu formularioa
+			garbituFormularioa();
 
 		} catch (IllegalArgumentException ex) {
 			JOptionPane.showMessageDialog(panela, ex.getMessage(), "Errorea", JOptionPane.WARNING_MESSAGE);
@@ -180,56 +239,46 @@ public class TaldeakGehituMetodo implements ActionListener {
 		}
 	}
 
+	/**
+	 * Klase honek sortutako interfaze grafikoaren panela itzultzen du,
+	 * leiho nagusian (JFrame) txertatu ahal izateko.
+	 * @return Taldeak gehitzeko pantailako {@link JPanel} objektua.
+	 */
 	public JPanel getPanela() {
 		return panela;
 	}
 
+	/**
+	 * Botoien klikak kudeatzen dituen metodoa.
+	 * Hemen taldearen armarria (eskudoa) aukeratzeko fitxategi-esploratzailea (JFileChooser) 
+	 * irekitzen da eta irudia kudeatzen/kopiatzen da proiektuaren karpeta batera.
+	 * @param e Botoiaren sakatze-gertaera.
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 
 		if (src == eskudoaBotoia) {
-		    JFileChooser fileChooser = new JFileChooser();
-		    fileChooser.setDialogTitle("Aukeratu eskudoa");
-		    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-		        "Irudiak (JPG, PNG, GIF)", "jpg", "jpeg", "png"));
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setDialogTitle("Aukeratu eskudoa");
+			fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+				"Irudiak (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"));
 
-		    int aukeraketa = fileChooser.showOpenDialog(panela);
-		    if (aukeraketa == JFileChooser.APPROVE_OPTION) {
-		        java.io.File fitxategia = fileChooser.getSelectedFile();
+			int aukeraketa = fileChooser.showOpenDialog(panela);
+			if (aukeraketa == JFileChooser.APPROVE_OPTION) {
+				java.io.File fitxategia = fileChooser.getSelectedFile();
+				aukeratutakoEskudoaPath = fitxategia.getAbsolutePath();
 
-		        // Eskalatu eta jarri JLabel-era
-		        ImageIcon originalIcon = new ImageIcon(fitxategia.getAbsolutePath());
-		        Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-		        ImageIcon scaledIcon = new ImageIcon(scaledImage);
-		        eskudoaLabel.setIcon(scaledIcon);
-		        eskudoaLabel.setText("");
-		        eskudoaLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		        eskudoaLabel.setVerticalAlignment(SwingConstants.CENTER);
-
-		        // Karpeta non gorde nahi duzun
-		        String karpetaPath = "/images/LogosEquipos";
-		        java.io.File karpeta = new java.io.File(karpetaPath);
-		        if (!karpeta.exists()) {
-		            karpeta.mkdirs(); // sortu karpeta, existitzen ez bada
-		        }
-
-		        // Fitxategia kopiatu karpetara
-		        java.io.File destinationFile = new java.io.File(karpeta, fitxategia.getName());
-		        try {
-		            java.nio.file.Files.copy(fitxategia.toPath(), destinationFile.toPath(),
-		                                     java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-		            // Path erlatiboa edo izena gorde Taldea objektuan
-		            // Adibidez:
-		            // t.setLogoPath("images/LogosEquipos/" + fitxategia.getName());
-		            System.out.println("Eskudoa gorde da: " + destinationFile.getAbsolutePath());
-		        } catch (Exception ex) {
-		            JOptionPane.showMessageDialog(panela, "Errorea eskudoa gordetzean: " + ex.getMessage(),
-		                                          "Errorea", JOptionPane.ERROR_MESSAGE);
-		            ex.printStackTrace();
-		        }
-		    }
+				// Eskalatu eta jarri JLabel-era
+				ImageIcon originalIcon = new ImageIcon(fitxategia.getAbsolutePath());
+				Image scaledImage = originalIcon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+				ImageIcon scaledIcon = new ImageIcon(scaledImage);
+				eskudoaLabel.setIcon(scaledIcon);
+				eskudoaLabel.setText(""); // Testua kendu, miniatura erakusteko
+				eskudoaLabel.setForeground(Color.WHITE); // Kolorea aldatu (aukeratuta dagoela adierazteko)
+				eskudoaLabel.setHorizontalAlignment(SwingConstants.LEFT);
+				eskudoaLabel.setVerticalAlignment(SwingConstants.CENTER);
+			}
 		}
-
 	}
 }

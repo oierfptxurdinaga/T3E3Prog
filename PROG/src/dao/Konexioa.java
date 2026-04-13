@@ -4,7 +4,8 @@ import java.sql.*;
 
 /**
  * Datu-basearen konexioa kudeatzeko klasea.
- * MySQL datu-basearekin konexioa ireki eta ixteko metodoak eskaintzen ditu.
+ * MySQL datu-basearekin konexioa ireki eta ixteko metodoak eskaintzen ditu,
+ * JDBC driverra erabiliz.
  */
 public class Konexioa {
     
@@ -16,15 +17,16 @@ public class Konexioa {
     private Connection konexioa;
     
     /**
-     * Eraikitzailea. Hasieran konexioa null da.
+     * Konexioa klasearen eraikitzailea.
+     * Hasieratzean, konexio objektua null gisa definitzen du.
      */
     public Konexioa() {
         this.konexioa = null;
     }
     
     /**
-     * Datu-basearekin konexioa irekitzen saiatzen da.
-     * @return true konexioa ondo ireki bada, bestela false
+     * Datu-basearekin konexioa irekitzen saiatzen da MySQL JDBC driverra kargatuz.
+     * * @return true konexioa ondo ireki bada, false errore bat egon bada (driverra ez da aurkitu edo SQL errorea).
      */
     public boolean konexioaIreki() {
         try {
@@ -44,7 +46,8 @@ public class Konexioa {
     }
     
     /**
-     * Konexioa ixten du.
+     * Konexioa ixten du, irekita badago.
+     * SQLException erroreak kudeatzen ditu konexioa ixtean arazoren bat egonez gero.
      */
     public void konexioaItxi() {
         if (konexioa != null) {
@@ -58,18 +61,18 @@ public class Konexioa {
     }
     
     /**
-     * Konexio objektua itzultzen du.
-     * @return Connection objektua edo null
+     * Uneko konexio objektua lortzeko metodoa.
+     * * @return {@link Connection} objektua, edo null konexioa ireki ez bada.
      */
     public Connection getKonexioa() {
         return konexioa;
     }
     
     /**
-     * Konexioa irekita dagoen egiaztatzen du.
-     * @return true irekita badago, bestela false
+     * Konexioa une honetan irekita eta erabilgarri dagoen egiaztatzen du.
+     * * @return true konexioa irekita badago, false itxita badago edo null bada.
      */
-    public boolean konexioaEgonean() {
+    public boolean konexioaIrekitaDago() {
         try {
             return konexioa != null && !konexioa.isClosed();
         } catch (SQLException e) {

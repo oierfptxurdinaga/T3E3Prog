@@ -6,13 +6,27 @@ import java.util.List;
 
 import pojos.Jardunaldia;
 
+/**
+ * Jardunaldia entitatearentzako Datuetarako Sarbide Objektua (DAO - Data Access Object).
+ * Datu-basean jardunaldiekin lotutako eragiketak kudeatzen ditu, hala nola jardunaldiak 
+ * sortzea, denboraldien arabera bilatzea eta denboraldiekin lotzea.
+ */
 public class JardunaldiaDAO {
 	private Konexioa konexioa; // DBrekin konektatzeko objektua
 
+	/**
+	 * JardunaldiaDAO klasearen eraikitzailea.
+	 * Datu-basearekiko konexioa kudeatzen duen objektua hasieratzen du.
+	 */
 	public JardunaldiaDAO() {
 		konexioa = new Konexioa();
 	}
 
+	/**
+	 * Denboraldi zehatz bati dagozkion jardunaldi guztiak eskuratzen ditu datu-basetik.
+	 * @param denboraldiaKod Bilatu nahi diren jardunaldien denboraldiaren identifikatzailea.
+	 * @return Ematen den denboraldiari lotutako {@link Jardunaldia} objektuen zerrenda (List).
+	 */
 	// Denboraldi baten jardunaldi guztiak lortzeko metodoa
 	public List<Jardunaldia> lostuJardunaldiDenboraldiBidez(int denboraldiaKod) {
 		List<Jardunaldia> zerrenda = new ArrayList<>();
@@ -45,6 +59,11 @@ public class JardunaldiaDAO {
 		return zerrenda; // Jardunaldi guztien zerrenda itzuli
 	}
 
+	/**
+	 * Jardunaldi berri bat datu-basean sortzen du eta automatikoki esleitutako identifikatzailea lortzen du.
+	 * @param jardunaldia Sortu nahi den jardunaldiaren datuak dituen {@link Jardunaldia} objektua.
+	 * @return Sortutako jardunaldiaren identifikatzailea (ID auto-sortua), edo -1 arazoren bat egon bada.
+	 */
 	// Jardunaldia sortu eta IDa lortu
 	public int jardunaldiaSortu(Jardunaldia jardunaldia) {
 		String sql = "INSERT INTO jaurdunaldia (hasiera_data, amaiera_data) VALUES (?, ?)";
@@ -76,6 +95,12 @@ public class JardunaldiaDAO {
 		return -1; // Arazo bat egon bada, -1 itzuli
 	}
 
+	/**
+	 * Jardunaldi bat denboraldi zehatz batekin lotzen du datu-baseko bitarteko taula erabiliz (denboraldia_jaurdunaldia).
+	 * @param denboraldiaKod Jardunaldia lotuko zaion denboraldiaren identifikatzailea.
+	 * @param jardunaldiKod Denboraldiarekin lotu nahi den jardunaldiaren identifikatzailea.
+	 * @return true lotura ondo sortu bada, edo false arazoren bat egon bada.
+	 */
 	// Jardunaldi bat denboraldi batekin lotzeko metodoa
 	public boolean denboraldiaAsoziatu(int denboraldiaKod, int jardunaldiKod) {
 		String sql = "INSERT INTO denboraldia_jaurdunaldia (denboraldia_kod, jaurdunaldi_kod) VALUES (?, ?)";

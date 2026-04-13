@@ -32,6 +32,13 @@ import javax.swing.table.DefaultTableModel;
 import dao.ErabiltzaileakDAO;
 import pojos.Erabiltzailea;
 
+/**
+ * Ikuspegiaren (View) geruzako klasea.
+ * Erabiltzaileak kudeatzeko pantaila (panela) ordezkatzen du.
+ * Hemen datu-baseko erabiltzaileak taula batean erakusten dira, 
+ * administratzaileak ez direnak ezabatzeko aukera ematen da eta 
+ * ekintza horien erregistroa (log) testu-fitxategi batean gordetzen da.
+ */
 public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 
 	private JTable taula;
@@ -56,6 +63,12 @@ public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 
 	private PrintWriter logger;
 
+	/**
+	 * ErabiltzaileaKudeatu klasearen eraikitzailea.
+	 * Interfaze grafikoa eraikitzen du, erabiltzaileen datuak kargatzen ditu 
+	 * eta log fitxategia prestatzen du.
+	 * * @param urdina Aplikazioaren diseinu-patroiari jarraitzen dion atzeko planoaren kolorea.
+	 */
 	public ErabiltzaileaKudeatu(Color urdina) {
 		setLayout(new BorderLayout());
 		setBackground(urdina);
@@ -139,7 +152,10 @@ public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 		 initLogger();
 	}
 
-	// LOG sortzeko
+	/**
+	 * Log fitxategia ("log.txt") irekitzen edo sortzen du, 
+	 * administratzaileak egiten dituen ezabaketak bertan erregistratzeko.
+	 */
 	private void initLogger() {
 		try {
 			File logFile = new File("log.txt");
@@ -152,6 +168,11 @@ public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 		}
 	}
 
+	/**
+	 * Mezu bat idazten du log fitxategian une horretako data eta orduarekin.
+	 * * @param izena Ekintzari lotutako erabiltzailearen izena (edo mezua).
+	 * @param message Ekintzaren xehetasuna (adibidez, erabiltzailearen rola).
+	 */
 	private void log(String izena, String message) {
 		if (logger != null) {
 			LocalDateTime now = LocalDateTime.now();
@@ -161,7 +182,10 @@ public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 		}
 	}
 
-	// Hemen ErabiltzaileakDAO en metodoa hartu eta taulan kargatuko da
+	/**
+	 * Datu-basetik erabiltzaile guztiak eskuratu eta GUI-ko taulan erakusten ditu.
+	 * Halaber, bistaratutako erabiltzaile kopuru osoa eguneratzen du.
+	 */
 	private void kargatuErabiltzaileak() {
 
 		ErabiltzaileakDAO dao = new ErabiltzaileakDAO();
@@ -239,6 +263,9 @@ public class ErabiltzaileaKudeatu extends JPanel implements ActionListener {
 
 	}
 
+	/**
+	 * Log fitxategiaren idazketa-korrontea modu seguruan ixten du.
+	 */
 	public void closeLogger() {
 		if (logger != null) {
 //        logger.println("Logger cerrado.");

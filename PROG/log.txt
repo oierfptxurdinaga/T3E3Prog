@@ -40,3 +40,20 @@
 [2026-04-13 09:12:18]: [LOGUEATU] Irati ADMIN sartu da.
 [2026-04-13 09:12:48]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
 [2026-04-13 09:13:02]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 10:28:06]: [LOGUEATU] urtzi ERABILTZAILEA sartu da.
+[2026-04-13 12:37:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 12:42:42]: XML sortu | XML fitxategia sortu da
+[2026-04-13 12:51:05]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 12:56:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:12:41]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:31:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:33:18]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:45:22]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:54:55]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:58:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:02:26]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:09:31]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:11:44]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:17:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:22:00]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:22:32]: [LOGUEATU] Urtzi ADMIN sartu da.

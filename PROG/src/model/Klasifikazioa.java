@@ -8,16 +8,38 @@ import pojos.Partida;
 import pojos.Taldea;
 import pojos.TaldearenKlasifikazioa;
 
+/**
+ * Negozio-logikaren klasea (Model geruza).
+ * Boleibol ligako taldeen sailkapena (klasifikazioa) kalkulatzeaz arduratzen da.
+ * Datu-basetik lortutako partiden emaitzak aztertzen ditu eta talde bakoitzaren 
+ * puntuak, jokatutako partidak eta set-en diferentziak kalkulatzen ditu 
+ * txapelketako arauen arabera.
+ */
 public class Klasifikazioa {
 
 	private PartidaDAO partidaDAO;
 	private TaldeaDAO taldeaDAO;
 
+	/**
+	 * Klasifikazioa klasearen eraikitzailea.
+	 * Partiden eta taldeen datuak lortzeko beharrezkoak diren DAO objektuak hasieratzen ditu.
+	 */
 	public Klasifikazioa() {
 		partidaDAO = new PartidaDAO();
 		taldeaDAO = new TaldeaDAO();
 	}
 
+	/**
+	 * Denboraldi zehatz bateko taldeen sailkapen orokorra kalkulatzen eta ordenatzen du.
+	 * Metodo honek denboraldi horretako talde guztiak hasieratzen ditu, partiden 
+	 * emaitzak (adibidez "3-1") banatzen ditu estatistikak eguneratzeko (set-ak eta 
+	 * partidak), eta azkenik zerrenda ordenatzen du ondorengo irizpideak jarraituz:
+	 * 1. Puntu kopurua.
+	 * 2. Set diferentzia.
+	 * 3. Irabazitako set kopurua.
+	 * * @param denboraldiaKod Kalkulatu nahi den denboraldiaren identifikatzailea (ID).
+	 * @return Txapelketaren arauen arabera ordenatuta dagoen {@link TaldearenKlasifikazioa} objektuen zerrenda.
+	 */
 	public List<TaldearenKlasifikazioa> lortuKlasifikazioaDenboraldian(int denboraldiaKod) {
 
 		// Denboraldi honetako partidak lortu

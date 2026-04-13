@@ -8,9 +8,19 @@ import pojos.Taldea;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+/**
+ * Ikuspegiaren (View) geruzako klasea.
+ * Jokalari berri bat datu-basean erregistratzeko interfaze grafikoa ordezkatzen du.
+ * Formulario bat eskaintzen du jokalariaren datu pertsonalak eta fisikoak (izena, abizena, 
+ * pisua, altuera, etab.) idazteko eta dagokion taldea esleitzeko.
+ * Gainera, jokalariaren argazkia hautatu eta gordetzeko aukera ematen du.
+ */
 public class JokalariakGehituMetodo {
 
     private JPanel panela;
@@ -42,10 +52,16 @@ public class JokalariakGehituMetodo {
     private JLabel herritartasunaLabel;
     private JLabel taldeaLabel;
     private JLabel argazkiaLabel;
+    private JLabel argazkiIrudiaLabel; // Para mostrar la miniatura
 
-    
-    
+    private String aukeratutakoArgazkiPath = null; // Ruta absoluta del archivo seleccionado
 
+    /**
+     * JokalariakGehituMetodo klasearen eraikitzailea.
+     * Formularioaren osagai grafiko guztiak (etiketak, testu-eremuak, goitibeherako menuak eta botoiak) 
+     * hasieratzen ditu, eta taldeen zerrenda kargatzen du datu-basetik.
+     * @param kolorea Aplikazioaren diseinuari dagokion atzeko planoaren kolorea.
+     */
     public JokalariakGehituMetodo(Color kolorea) {
         jokalariaDAO = new JokalariaDAO();
         taldeaDAO = new TaldeaDAO();
@@ -170,21 +186,28 @@ public class JokalariakGehituMetodo {
         panela.add(taldeaCombo);
         y += rowHeight;
 
-        // Botón para seleccionar foto (placeholder)
+        // Botón para seleccionar foto
         argazkiaBotoia = new JButton("Aukeratu argazkia");
         argazkiaBotoia.setFont(new Font("Arial", Font.BOLD, 14));
         argazkiaBotoia.setBounds(fieldX, y, 200, 35);
-        argazkiaBotoia.addActionListener(e ->
-            JOptionPane.showMessageDialog(panela, "Argazkia aukeratzeko funtzioa (placeholder)")
-        );
+        argazkiaBotoia.addActionListener(e -> aukeratuArgazkia());
         panela.add(argazkiaBotoia);
 
+        // Etiqueta para texto informativo
         argazkiaLabel = new JLabel("Ez da argazkirik hautatu");
         argazkiaLabel.setForeground(Color.LIGHT_GRAY);
         argazkiaLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         argazkiaLabel.setBounds(fieldX, y + 40, 250, 20);
         panela.add(argazkiaLabel);
-        y += 60;
+
+        // Etiqueta para mostrar miniatura de la imagen (a la derecha)
+        argazkiIrudiaLabel = new JLabel();
+        argazkiIrudiaLabel.setBounds(fieldX + 220, y - 10, 100, 100);
+        argazkiIrudiaLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+        argazkiIrudiaLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panela.add(argazkiIrudiaLabel);
+        
+        y += 70; // Espacio adicional para la miniatura
 
         // Botones Gorde y Ezeztatu
         gordeBotoia = new JButton("Gorde");
@@ -200,20 +223,60 @@ public class JokalariakGehituMetodo {
         ezeztatuBotoia.setBackground(Color.RED);
         ezeztatuBotoia.setForeground(Color.WHITE);
         ezeztatuBotoia.setBounds(480, y, 150, 40);
-        ezeztatuBotoia.addActionListener(e -> {
-            izenaField.setText("");
-            abizenaField.setText("");
-            nanField.setText("");
-            posizioaField.setText("");
-            pisuaField.setText("");
-            altueraField.setText("");
-            herritartasunaField.setText("");
-            taldeaCombo.setSelectedIndex(0);
-            argazkiaLabel.setText("Ez da argazkirik hautatu");
-        });
+        ezeztatuBotoia.addActionListener(e -> garbituFormularioa());
         panela.add(ezeztatuBotoia);
     }
 
+    /**
+     * Fitxategi-esploratzailea irekitzen du irudi bat aukeratzeko.
+     * Aukeratutako irudia eskalatu eta panalean erakusten du, eta gordetzeko prestatzen du.
+     */
+    private void aukeratuArgazkia() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Aukeratu jokalariaren argazkia");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
+            "Irudiak (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"));
+
+        int aukeraketa = fileChooser.showOpenDialog(panela);
+        if (aukeraketa == JFileChooser.APPROVE_OPTION) {
+            File fitxategia = fileChooser.getSelectedFile();
+            aukeratutakoArgazkiPath = fitxategia.getAbsolutePath();
+
+            // Eskalatu irudia eta erakutsi miniatura
+            ImageIcon originalIcon = new ImageIcon(aukeratutakoArgazkiPath);
+            Image scaledImage = originalIcon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+            ImageIcon scaledIcon = new ImageIcon(scaledImage);
+            argazkiIrudiaLabel.setIcon(scaledIcon);
+            argazkiaLabel.setText("Aukeratua: " + fitxategia.getName());
+            argazkiaLabel.setForeground(Color.WHITE);
+        }
+    }
+
+    /**
+     * Formularioa hasierako egoerara itzultzen du.
+     */
+    private void garbituFormularioa() {
+        izenaField.setText("");
+        abizenaField.setText("");
+        nanField.setText("");
+        posizioaField.setText("");
+        pisuaField.setText("");
+        altueraField.setText("");
+        herritartasunaField.setText("");
+        taldeaCombo.setSelectedIndex(0);
+        argazkiaLabel.setText("Ez da argazkirik hautatu");
+        argazkiaLabel.setForeground(Color.LIGHT_GRAY);
+        argazkiIrudiaLabel.setIcon(null);
+        aukeratutakoArgazkiPath = null;
+    }
+
+    /**
+     * Formularioan sartutako datuak balioztatzen ditu eta jokalari berria datu-basean gordetzen du.
+     * Datuen formatua egiaztatzen du (pisua eta altuera logikoak diren zenbakiak direla bermatuz) 
+     * eta hutsik egon ezin diren ezinbesteko eremuak kontrolatzen ditu. Dena zuzen badago, 
+     * DAO-ari deitzen dio txertaketa egiteko.
+     * Argazkia hautatu bada, proiektuko 'images/Jugadores/' karpetan gordetzen da.
+     */
     private void gordeJokalaria() {
         try {
             // Validar campos obligatorios
@@ -262,6 +325,29 @@ public class JokalariakGehituMetodo {
             Taldea taldea = (Taldea) taldeaCombo.getSelectedItem();
             j.setTaldea(taldea);
 
+            // Gestión de la foto
+            String argazkiRelativePath = null;
+            if (aukeratutakoArgazkiPath != null && !aukeratutakoArgazkiPath.isEmpty()) {
+                // Crear carpeta si no existe
+                String karpetaPath = "images/Jugadores";
+                File karpeta = new File(karpetaPath);
+                if (!karpeta.exists()) {
+                    karpeta.mkdirs();
+                }
+
+                // Generar nombre único: ID_timestamp.ext (el ID aún no lo tenemos, usamos timestamp)
+                String extension = aukeratutakoArgazkiPath.substring(aukeratutakoArgazkiPath.lastIndexOf('.'));
+                String izenBerria = "jug_" + System.currentTimeMillis() + extension;
+                File destino = new File(karpeta, izenBerria);
+
+                // Copiar archivo
+                Files.copy(new File(aukeratutakoArgazkiPath).toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+                // Guardar ruta relativa (para que sea portable)
+                argazkiRelativePath = karpetaPath + "/" + izenBerria;
+            }
+            j.setArgazkia(argazkiRelativePath);
+
             // Guardar en BD
             boolean insertado = jokalariaDAO.jokalariaSortu(j);
             if (!insertado) {
@@ -270,7 +356,7 @@ public class JokalariakGehituMetodo {
 
             JOptionPane.showMessageDialog(panela, "Jokalaria ondo gorde da.", "Ondo", JOptionPane.INFORMATION_MESSAGE);
             // Limpiar campos
-            ezeztatuBotoia.doClick();
+            garbituFormularioa();
 
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(panela, ex.getMessage(), "Errorea", JOptionPane.WARNING_MESSAGE);
@@ -280,6 +366,11 @@ public class JokalariakGehituMetodo {
         }
     }
 
+    /**
+     * Klase honek sortutako interfaze grafikoaren panela itzultzen du,
+     * leiho nagusian (JFrame) txertatu ahal izateko.
+     * @return Jokalariak gehitzeko pantailako {@link JPanel} objektua.
+     */
     public JPanel getPanela() {
         return panela;
     }

@@ -32,6 +32,12 @@ import dao.DenboraldiaDAO;
 import pojos.Denboraldia;
 import pojos.TaldearenKlasifikazioa;
 
+/**
+ * Ikuspegiaren (View) geruzako klasea.
+ * Boleibol ligako sailkapena (klasifikazioa) ikusteko eta kudeatzeko pantaila ordezkatzen du.
+ * Erabiltzaileari denboraldi bat aukeratu, taldeen puntuazioa eta estatistikak taula batean 
+ * ikusi, eta datu horiek XML fitxategi batean esportatzeko aukera ematen dio.
+ */
 public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 
 	private JPanel panela;
@@ -56,6 +62,12 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 
 	private PrintWriter logger;
 
+	/**
+	 * KlasifikazioaMetodo klasearen eraikitzailea.
+	 * Interfaze grafikoaren osagaiak hasieratzen ditu, denboraldien datuak kargatzen ditu, 
+	 * taularen egitura sortzen du eta ekintzak log fitxategi batean gordetzeko prestatzen da.
+	 * @param urdina Aplikazioaren diseinuari dagokion atzeko planoaren kolorea.
+	 */
 	public KlasifikazioaMetodo(Color urdina) {
 
 		// Zerbitzuak hasieratu
@@ -176,9 +188,8 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 
 	/**
 	 * Mezu bat idazten du log fitxategian.
-	 * 
-	 * @param 
- Log-ean idazteko mezua
+	 * * @param izena  Ekintzaren izena edo etiketa.
+	 * @param mezua  Log-ean idazteko xehetasun mezua.
 	 */
 	private void log(String izena, String mezua) {
 		if (logger != null) {
@@ -191,37 +202,40 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 
 	// Denboraldi guztiak kargatu combora
 	private void denboraldiakKargatu() {
-		List<Denboraldia> denboraldiak = denboraldiaDAO.denboraldiakAtera();
-		for (Denboraldia d : denboraldiak) {
-			denboraldiaCombo.addItem(d);
-		}
+	    List<Denboraldia> denboraldiak = denboraldiaDAO.denboraldiakAtera();
+	    for (Denboraldia d : denboraldiak) {
+	        denboraldiaCombo.addItem(d);
+	    }
 	}
 
 	// Denboraldiak eguneratu (berkargatu)
 	public void eguneratuDenboraldiak() {
-		Denboraldia selected = (Denboraldia) denboraldiaCombo.getSelectedItem();
-		int selectedId = (selected != null) ? selected.getDenboraldiaKod() : -1;
-
-		denboraldiaCombo.removeAllItems();
-		denboraldiakKargatu();
-
-		// Aurreko hautaketa berreskuratzen saiatu
-		if (selectedId != -1) {
-			for (int i = 0; i < denboraldiaCombo.getItemCount(); i++) {
-				Denboraldia d = denboraldiaCombo.getItemAt(i);
-				if (d.getDenboraldiaKod() == selectedId) {
-					denboraldiaCombo.setSelectedIndex(i);
-					return;
-				}
-			}
-		}
-
-		// Bestela, lehenengoa aukeratu
-		if (denboraldiaCombo.getItemCount() > 0) {
-			denboraldiaCombo.setSelectedIndex(0);
-		}
+	    Denboraldia selected = (Denboraldia) denboraldiaCombo.getSelectedItem();
+	    int selectedId = (selected != null) ? selected.getDenboraldiaKod() : -1;
+	    denboraldiaCombo.removeAllItems();
+	    List<Denboraldia> denboraldiak = denboraldiaDAO.denboraldiakAtera();
+	    for (Denboraldia d : denboraldiak) {
+	        denboraldiaCombo.addItem(d);
+	    }
+	    if (selectedId != -1) {
+	        for (int i = 0; i < denboraldiaCombo.getItemCount(); i++) {
+	            Denboraldia d = denboraldiaCombo.getItemAt(i);
+	            if (d.getDenboraldiaKod() == selectedId) {
+	                denboraldiaCombo.setSelectedIndex(i);
+	                return;
+	            }
+	        }
+	    }
+	    if (denboraldiaCombo.getItemCount() > 0) {
+	        denboraldiaCombo.setSelectedIndex(0);
+	    }
 	}
 
+	/**
+	 * Unean hautatuta dagoen denboraldiaren sailkapen datuak kalkulatzen ditu 
+	 * Zerbitzu-geruzaren (Model) bidez, eta interfaze grafikoko taulan erakusten ditu.
+	 * @throws Exception Datu-baseko irakurketan edo kalkuluan arazoren bat badago.
+	 */
 	// Klasifikazioa kalkulatu eta taulan erakutsi
 	private void kargatuKlasifikazioa() throws Exception {
 		taulaModeloa.setRowCount(0); // Taula garbitu
@@ -259,6 +273,10 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 		}
 	}
 
+	/**
+	 * Taulan agertzen den sailkapeneko informazio osoa hartu eta "klasifikazioa.xml" 
+	 * izeneko fitxategian esportatzen du (DOM erabiliz), etiketa egituratuetan gordez.
+	 */
 	// Metodo honek aukeratutako denboraldia klasifikazioa xml-batean gordeko da
 	private void gordeXML() {
 		try {
@@ -337,6 +355,11 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 		}
 	}
 
+	/**
+	 * Klase honek sortutako interfaze grafikoaren panela itzultzen du,
+	 * leiho nagusian (JFrame) txertatu ahal izateko.
+	 * @return Klasifikazioa pantailako {@link JPanel} objektua.
+	 */
 	// Panel nagusia lortzeko metodoa
 	public JPanel getPanela() {
 		return panela;
@@ -389,14 +412,34 @@ public class KlasifikazioaMetodo implements ActionListener, MouseListener {
 		}
 		// Klik egitean denboraldia amaitzeko funtzioa
 		if (src == amaituDenboraldiaBotoia) {
-			try {
-				amaituDenboraldia();
-			} catch (Exception ex) {
-				JOptionPane.showMessageDialog(panela, "Errorea denboraldia amaitzerakoan: " + ex.getMessage(),
-						"Errorea", JOptionPane.ERROR_MESSAGE);
-				ex.printStackTrace();
-			}
-
+		    try {
+		        Denboraldia aktiboa = denboraldiaDAO.denboraldiaAktiboaLortu();
+		        if (aktiboa == null) {
+		            JOptionPane.showMessageDialog(panela, "Ez dago denboraldi aktiborik amaitzeko.");
+		            return;
+		        }
+		        int resp = JOptionPane.showConfirmDialog(panela,
+		                "Ziur zaude \"" + aktiboa.getIzena() + "\" denboraldia amaitu nahi duzula?",
+		                "Denboraldia amaitu", JOptionPane.YES_NO_OPTION);
+		        if (resp == JOptionPane.YES_OPTION) {
+		            // Determinar campeón (podría calcularse automáticamente)
+		            String txapelduna = null; // O calcular desde la clasificación
+		            boolean amaitua = denboraldiaDAO.denboraldiaAmaitu(txapelduna);
+		            if (amaitua) {
+		                JOptionPane.showMessageDialog(panela, "Denboraldia amaitu da.");
+		                eguneratuDenboraldiak();
+		                // Notificar a la ventana principal para habilitar fichajes
+		                Main leihoNagusia = (Main) SwingUtilities.getWindowAncestor(panela);
+		                if (leihoNagusia != null) {
+		                    leihoNagusia.eguneratuPestanenEgoera();
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(panela, "Errorea denboraldia amaitzean.");
+		            }
+		        }
+		    } catch (Exception ex) {
+		        JOptionPane.showMessageDialog(panela, "Errorea: " + ex.getMessage());
+		    }
 		}
 
 		if (src == kargatuBotoia) {
