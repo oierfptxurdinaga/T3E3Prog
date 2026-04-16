@@ -14,7 +14,6 @@ public class TaldearenKlasifikazioa {
 		this.taldea = taldea;
 	}
 
-	// getters y setters y métodos de incremento...
 	public Taldea getTaldea() {
 		return taldea;
 	}

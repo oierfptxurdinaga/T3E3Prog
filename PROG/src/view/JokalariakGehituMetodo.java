@@ -1,11 +1,5 @@
 package view;
 
-import model.*;
-import dao.JokalariaDAO;
-import dao.TaldeaDAO;
-import pojos.Jokalaria;
-import pojos.Taldea;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -14,364 +8,324 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
+import dao.JokalariaDAO;
+import dao.TaldeaDAO;
+import pojos.Jokalaria;
+import pojos.Taldea;
+import util.LoggerUtil;
+import util.LoggerUtil.DataAccessException;
+
 /**
- * Ikuspegiaren (View) geruzako klasea.
- * Jokalari berri bat datu-basean erregistratzeko interfaze grafikoa ordezkatzen du.
- * Formulario bat eskaintzen du jokalariaren datu pertsonalak eta fisikoak (izena, abizena, 
- * pisua, altuera, etab.) idazteko eta dagokion taldea esleitzeko.
- * Gainera, jokalariaren argazkia hautatu eta gordetzeko aukera ematen du.
+ * Ikuspegiaren (View) geruzako klasea. Jokalari berri bat datu-basean
+ * erregistratzeko interfaze grafikoa.
  */
 public class JokalariakGehituMetodo {
 
-    private JPanel panela;
-    
-    private JTextField izenaField;
-    private JTextField abizenaField;
-    private JTextField nanField;
-    private JTextField posizioaField;
-    private JTextField pisuaField;
-    private JTextField altueraField;
-    private JTextField herritartasunaField;
-    
-    private JComboBox<Taldea> taldeaCombo;
-    
-    private JButton argazkiaBotoia;
-    private JButton gordeBotoia;
-    private JButton ezeztatuBotoia;
+	private JPanel panela;
+	private JTextField izenaField;
+	private JTextField abizenaField;
+	private JTextField nanField;
+	private JTextField posizioaField;
+	private JTextField pisuaField;
+	private JTextField altueraField;
+	private JTextField herritartasunaField;
+	private JComboBox<Taldea> taldeaCombo;
+	private JButton argazkiaBotoia;
+	private JLabel argazkiaLabel;
+	private JLabel argazkiIrudiaLabel;
+	private String aukeratutakoArgazkiPath = null;
+	private JokalariaDAO jokalariaDAO;
+	private TaldeaDAO taldeaDAO;
 
-    private JokalariaDAO jokalariaDAO;
-    private TaldeaDAO taldeaDAO;
-    
-    private JLabel titulua;
-    private JLabel izenaLabel;
-    private JLabel posizioaLabel;
-    private JLabel abizenaLabel;
-    private JLabel nanLabel;
-    private JLabel pisuaLabel;
-    private JLabel altueraLabel;
-    private JLabel herritartasunaLabel;
-    private JLabel taldeaLabel;
-    private JLabel argazkiaLabel;
-    private JLabel argazkiIrudiaLabel; // Para mostrar la miniatura
+	/**
+	 * JokalariakGehituMetodo klasearen eraikitzailea.
+	 * 
+	 * @param kolorea Atzeko planoaren kolorea.
+	 */
+	public JokalariakGehituMetodo(Color kolorea) {
+		jokalariaDAO = new JokalariaDAO();
+		taldeaDAO = new TaldeaDAO();
 
-    private String aukeratutakoArgazkiPath = null; // Ruta absoluta del archivo seleccionado
+		// Panela konfiguratu
+		panela = new JPanel(null);
+		panela.setBackground(kolorea);
 
-    /**
-     * JokalariakGehituMetodo klasearen eraikitzailea.
-     * Formularioaren osagai grafiko guztiak (etiketak, testu-eremuak, goitibeherako menuak eta botoiak) 
-     * hasieratzen ditu, eta taldeen zerrenda kargatzen du datu-basetik.
-     * @param kolorea Aplikazioaren diseinuari dagokion atzeko planoaren kolorea.
-     */
-    public JokalariakGehituMetodo(Color kolorea) {
-        jokalariaDAO = new JokalariaDAO();
-        taldeaDAO = new TaldeaDAO();
+		JLabel titulua = new JLabel("JOKALARI BERRIA GEHITU");
+		titulua.setForeground(Color.WHITE);
+		titulua.setFont(new Font("Arial", Font.BOLD, 32));
+		titulua.setBounds(200, 40, 600, 40);
+		panela.add(titulua);
 
-        panela = new JPanel(null);
-        panela.setBackground(kolorea);
+		int y = 100;
+		int labelX = 200;
+		int fieldX = 350;
+		int fieldWidth = 250;
+		int rowHeight = 40;
 
-        // Título
-        titulua = new JLabel("JOKALARI BERRIA GEHITU");
-        titulua.setForeground(Color.WHITE);
-        titulua.setFont(new Font("Arial", Font.BOLD, 32));
-        titulua.setBounds(200, 40, 600, 40);
-        panela.add(titulua);
+		// Izena
+		JLabel izenaLabel = new JLabel("Izena:");
+		izenaLabel.setForeground(Color.WHITE);
+		izenaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		izenaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(izenaLabel);
+		izenaField = new JTextField();
+		izenaField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(izenaField);
+		y += rowHeight;
 
-        int y = 100;
-        int labelX = 200;
-        int fieldX = 350;
-        int fieldWidth = 250;
-        int rowHeight = 40;
+		// Abizena
+		JLabel abizenaLabel = new JLabel("Abizena:");
+		abizenaLabel.setForeground(Color.WHITE);
+		abizenaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		abizenaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(abizenaLabel);
+		abizenaField = new JTextField();
+		abizenaField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(abizenaField);
+		y += rowHeight;
 
-        // Izena
-        izenaLabel = new JLabel("Izena:");
-        izenaLabel.setForeground(Color.WHITE);
-        izenaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        izenaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(izenaLabel);
+		// NAN
+		JLabel nanLabel = new JLabel("NAN:");
+		nanLabel.setForeground(Color.WHITE);
+		nanLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		nanLabel.setBounds(labelX, y, 120, 30);
+		panela.add(nanLabel);
+		nanField = new JTextField();
+		nanField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(nanField);
+		y += rowHeight;
 
-        izenaField = new JTextField();
-        izenaField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(izenaField);
-        y += rowHeight;
+		// Posizioa
+		JLabel posizioaLabel = new JLabel("Posizioa:");
+		posizioaLabel.setForeground(Color.WHITE);
+		posizioaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		posizioaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(posizioaLabel);
+		posizioaField = new JTextField();
+		posizioaField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(posizioaField);
+		y += rowHeight;
 
-        // Abizena
-        abizenaLabel = new JLabel("Abizena:");
-        abizenaLabel.setForeground(Color.WHITE);
-        abizenaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        abizenaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(abizenaLabel);
+		// Pisua
+		JLabel pisuaLabel = new JLabel("Pisua (kg):");
+		pisuaLabel.setForeground(Color.WHITE);
+		pisuaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		pisuaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(pisuaLabel);
+		pisuaField = new JTextField();
+		pisuaField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(pisuaField);
+		y += rowHeight;
 
-        abizenaField = new JTextField();
-        abizenaField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(abizenaField);
-        y += rowHeight;
+		// Altuera
+		JLabel altueraLabel = new JLabel("Altuera (m):");
+		altueraLabel.setForeground(Color.WHITE);
+		altueraLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		altueraLabel.setBounds(labelX, y, 120, 30);
+		panela.add(altueraLabel);
+		altueraField = new JTextField();
+		altueraField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(altueraField);
+		y += rowHeight;
 
-        // NAN
-        nanLabel = new JLabel("NAN:");
-        nanLabel.setForeground(Color.WHITE);
-        nanLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        nanLabel.setBounds(labelX, y, 120, 30);
-        panela.add(nanLabel);
+		// Herritartasuna
+		JLabel herritartasunaLabel = new JLabel("Herritartasuna:");
+		herritartasunaLabel.setForeground(Color.WHITE);
+		herritartasunaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		herritartasunaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(herritartasunaLabel);
+		herritartasunaField = new JTextField();
+		herritartasunaField.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(herritartasunaField);
+		y += rowHeight;
 
-        nanField = new JTextField();
-        nanField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(nanField);
-        y += rowHeight;
+		// Taldea
+		JLabel taldeaLabel = new JLabel("Taldea:");
+		taldeaLabel.setForeground(Color.WHITE);
+		taldeaLabel.setFont(new Font("Arial", Font.BOLD, 16));
+		taldeaLabel.setBounds(labelX, y, 120, 30);
+		panela.add(taldeaLabel);
+		taldeaCombo = new JComboBox<>();
+		taldeaCombo.addItem(null);
+		try {
+			List<Taldea> taldeak = taldeaDAO.taldeGuztiakLortu();
+			for (Taldea t : taldeak) {
+				if (t.getTaldeaKod() != 0) {
+					taldeaCombo.addItem(t);
+				}
+			}
+		} catch (DataAccessException e) {
+			LoggerUtil.log("ERROR taldeak kargatzean: " + e.getMessage());
+		}
+		taldeaCombo.setBounds(fieldX, y, fieldWidth, 30);
+		panela.add(taldeaCombo);
+		y += rowHeight;
 
-        // Posizioa
-        posizioaLabel = new JLabel("Posizioa:");
-        posizioaLabel.setForeground(Color.WHITE);
-        posizioaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        posizioaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(posizioaLabel);
+		// Argazkia aukeratzeko botoia
+		argazkiaBotoia = new JButton("Aukeratu argazkia");
+		argazkiaBotoia.setFont(new Font("Arial", Font.BOLD, 14));
+		argazkiaBotoia.setBounds(fieldX, y, 200, 35);
+		argazkiaBotoia.addActionListener(e -> aukeratuArgazkia());
+		panela.add(argazkiaBotoia);
 
-        posizioaField = new JTextField();
-        posizioaField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(posizioaField);
-        y += rowHeight;
+		argazkiaLabel = new JLabel("Ez da argazkirik hautatu");
+		argazkiaLabel.setForeground(Color.LIGHT_GRAY);
+		argazkiaLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+		argazkiaLabel.setBounds(fieldX, y + 40, 250, 20);
+		panela.add(argazkiaLabel);
 
-        // Pisua (kg)
-        pisuaLabel = new JLabel("Pisua (kg):");
-        pisuaLabel.setForeground(Color.WHITE);
-        pisuaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        pisuaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(pisuaLabel);
+		argazkiIrudiaLabel = new JLabel();
+		argazkiIrudiaLabel.setBounds(fieldX + 220, y - 10, 100, 100);
+		argazkiIrudiaLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+		argazkiIrudiaLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		panela.add(argazkiIrudiaLabel);
+		y += 70;
 
-        pisuaField = new JTextField();
-        pisuaField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(pisuaField);
-        y += rowHeight;
+		// Gorde botoia
+		JButton gordeBotoia = new JButton("Gorde");
+		gordeBotoia.setFont(new Font("Arial", Font.BOLD, 16));
+		gordeBotoia.setBackground(new Color(0, 150, 0));
+		gordeBotoia.setForeground(Color.WHITE);
+		gordeBotoia.setBounds(280, y, 150, 40);
+		gordeBotoia.addActionListener(e -> gordeJokalaria());
+		panela.add(gordeBotoia);
 
-        // Altuera (m)
-        altueraLabel = new JLabel("Altuera (m):");
-        altueraLabel.setForeground(Color.WHITE);
-        altueraLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        altueraLabel.setBounds(labelX, y, 120, 30);
-        panela.add(altueraLabel);
+		// Ezeztatu botoia
+		JButton ezeztatuBotoia = new JButton("Ezeztatu");
+		ezeztatuBotoia.setFont(new Font("Arial", Font.BOLD, 16));
+		ezeztatuBotoia.setBackground(Color.RED);
+		ezeztatuBotoia.setForeground(Color.WHITE);
+		ezeztatuBotoia.setBounds(480, y, 150, 40);
+		ezeztatuBotoia.addActionListener(e -> garbituFormularioa());
+		panela.add(ezeztatuBotoia);
+	}
 
-        altueraField = new JTextField();
-        altueraField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(altueraField);
-        y += rowHeight;
+	/**
+	 * Irudi bat aukeratzeko fitxategi-esploratzailea irekitzen du.
+	 */
+	private void aukeratuArgazkia() {
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Aukeratu jokalariaren argazkia");
+		fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Irudiak (JPG, PNG, GIF)", "jpg",
+				"jpeg", "png", "gif"));
 
-        // Herritartasuna
-        herritartasunaLabel = new JLabel("Herritartasuna:");
-        herritartasunaLabel.setForeground(Color.WHITE);
-        herritartasunaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        herritartasunaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(herritartasunaLabel);
+		if (fileChooser.showOpenDialog(panela) == JFileChooser.APPROVE_OPTION) {
+			File fitxategia = fileChooser.getSelectedFile();
+			aukeratutakoArgazkiPath = fitxategia.getAbsolutePath();
 
-        herritartasunaField = new JTextField();
-        herritartasunaField.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(herritartasunaField);
-        y += rowHeight;
+			// Irudia eskalatu eta erakutsi
+			ImageIcon originalIcon = new ImageIcon(aukeratutakoArgazkiPath);
+			Image scaledImage = originalIcon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+			argazkiIrudiaLabel.setIcon(new ImageIcon(scaledImage));
+			argazkiaLabel.setText("Aukeratua: " + fitxategia.getName());
+			argazkiaLabel.setForeground(Color.WHITE);
+		}
+	}
 
-        // Taldea
-        taldeaLabel = new JLabel("Taldea:");
-        taldeaLabel.setForeground(Color.WHITE);
-        taldeaLabel.setFont(new Font("Arial", Font.BOLD, 16));
-        taldeaLabel.setBounds(labelX, y, 120, 30);
-        panela.add(taldeaLabel);
+	/**
+	 * Formularioa garbitzen du.
+	 */
+	private void garbituFormularioa() {
+		izenaField.setText("");
+		abizenaField.setText("");
+		nanField.setText("");
+		posizioaField.setText("");
+		pisuaField.setText("");
+		altueraField.setText("");
+		herritartasunaField.setText("");
+		taldeaCombo.setSelectedIndex(0);
+		argazkiaLabel.setText("Ez da argazkirik hautatu");
+		argazkiaLabel.setForeground(Color.LIGHT_GRAY);
+		argazkiIrudiaLabel.setIcon(null);
+		aukeratutakoArgazkiPath = null;
+	}
 
-        taldeaCombo = new JComboBox<>();
-        // Añadir opción "Sin equipo" (null)
-        taldeaCombo.addItem(null);
-        List<Taldea> taldeak = taldeaDAO.taldeGuztiakLortu();
-        for (Taldea t : taldeak) {
-            if (t.getTaldeaKod() != 0) { // Ignorar placeholder si existe
-                taldeaCombo.addItem(t);
-            }
-        }
-        taldeaCombo.setBounds(fieldX, y, fieldWidth, 30);
-        panela.add(taldeaCombo);
-        y += rowHeight;
+	/**
+	 * Jokalari berria datu-basean gordetzen du.
+	 */
+	private void gordeJokalaria() {
+		try {
+			// Derrigorrezko eremuak egiaztatu
+			if (izenaField.getText().trim().isEmpty() || abizenaField.getText().trim().isEmpty()
+					|| posizioaField.getText().trim().isEmpty()) {
+				throw new IllegalArgumentException("Izena, abizena eta posizioa ezin dira hutsik egon.");
+			}
 
-        // Botón para seleccionar foto
-        argazkiaBotoia = new JButton("Aukeratu argazkia");
-        argazkiaBotoia.setFont(new Font("Arial", Font.BOLD, 14));
-        argazkiaBotoia.setBounds(fieldX, y, 200, 35);
-        argazkiaBotoia.addActionListener(e -> aukeratuArgazkia());
-        panela.add(argazkiaBotoia);
+			Jokalaria j = new Jokalaria();
+			j.setIzena(izenaField.getText().trim());
+			j.setAbizena(abizenaField.getText().trim());
+			j.setNan(nanField.getText().trim().isEmpty() ? null : nanField.getText().trim());
+			j.setPosizioa(posizioaField.getText().trim());
 
-        // Etiqueta para texto informativo
-        argazkiaLabel = new JLabel("Ez da argazkirik hautatu");
-        argazkiaLabel.setForeground(Color.LIGHT_GRAY);
-        argazkiaLabel.setFont(new Font("Arial", Font.PLAIN, 12));
-        argazkiaLabel.setBounds(fieldX, y + 40, 250, 20);
-        panela.add(argazkiaLabel);
+			// Pisua balidatu (50-120 kg)
+			if (!pisuaField.getText().trim().isEmpty()) {
+				try {
+					double pisua = Double.parseDouble(pisuaField.getText().trim());
+					if (pisua < 50 || pisua > 120) {
+						throw new IllegalArgumentException("Pisua 50 eta 120 artean egon behar da.");
+					}
+					j.setPisua(BigDecimal.valueOf(pisua));
+				} catch (NumberFormatException ex) {
+					throw new IllegalArgumentException("Pisua zenbaki bat izan behar da.");
+				}
+			}
 
-        // Etiqueta para mostrar miniatura de la imagen (a la derecha)
-        argazkiIrudiaLabel = new JLabel();
-        argazkiIrudiaLabel.setBounds(fieldX + 220, y - 10, 100, 100);
-        argazkiIrudiaLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-        argazkiIrudiaLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        panela.add(argazkiIrudiaLabel);
-        
-        y += 70; // Espacio adicional para la miniatura
+			// Altuera balidatu (1.50-2.20 m)
+			if (!altueraField.getText().trim().isEmpty()) {
+				try {
+					double altuera = Double.parseDouble(altueraField.getText().trim());
+					if (altuera < 1.50 || altuera > 2.20) {
+						throw new IllegalArgumentException("Altuera 1.50 eta 2.20 artean egon behar da.");
+					}
+					j.setAltuera(BigDecimal.valueOf(altuera));
+				} catch (NumberFormatException ex) {
+					throw new IllegalArgumentException("Altuera zenbaki bat izan behar da.");
+				}
+			}
 
-        // Botones Gorde y Ezeztatu
-        gordeBotoia = new JButton("Gorde");
-        gordeBotoia.setFont(new Font("Arial", Font.BOLD, 16));
-        gordeBotoia.setBackground(new Color(0, 150, 0));
-        gordeBotoia.setForeground(Color.WHITE);
-        gordeBotoia.setBounds(280, y, 150, 40);
-        gordeBotoia.addActionListener(e -> gordeJokalaria());
-        panela.add(gordeBotoia);
+			j.setHerritartasuna(
+					herritartasunaField.getText().trim().isEmpty() ? null : herritartasunaField.getText().trim());
+			j.setTaldea((Taldea) taldeaCombo.getSelectedItem());
 
-        ezeztatuBotoia = new JButton("Ezeztatu");
-        ezeztatuBotoia.setFont(new Font("Arial", Font.BOLD, 16));
-        ezeztatuBotoia.setBackground(Color.RED);
-        ezeztatuBotoia.setForeground(Color.WHITE);
-        ezeztatuBotoia.setBounds(480, y, 150, 40);
-        ezeztatuBotoia.addActionListener(e -> garbituFormularioa());
-        panela.add(ezeztatuBotoia);
-    }
+			// Argazkia gorde
+			String argazkiRelativePath = null;
+			if (aukeratutakoArgazkiPath != null && !aukeratutakoArgazkiPath.isEmpty()) {
+				String karpetaPath = "images/Jugadores";
+				File karpeta = new File(karpetaPath);
+				if (!karpeta.exists()) {
+					karpeta.mkdirs();
+				}
+				String extension = aukeratutakoArgazkiPath.substring(aukeratutakoArgazkiPath.lastIndexOf('.'));
+				String izenBerria = "jug_" + System.currentTimeMillis() + extension;
+				File destino = new File(karpeta, izenBerria);
+				Files.copy(new File(aukeratutakoArgazkiPath).toPath(), destino.toPath(),
+						StandardCopyOption.REPLACE_EXISTING);
+				argazkiRelativePath = karpetaPath + "/" + izenBerria;
+			}
+			j.setArgazkia(argazkiRelativePath);
 
-    /**
-     * Fitxategi-esploratzailea irekitzen du irudi bat aukeratzeko.
-     * Aukeratutako irudia eskalatu eta panalean erakusten du, eta gordetzeko prestatzen du.
-     */
-    private void aukeratuArgazkia() {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Aukeratu jokalariaren argazkia");
-        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter(
-            "Irudiak (JPG, PNG, GIF)", "jpg", "jpeg", "png", "gif"));
+			// Datu-basean gorde
+			jokalariaDAO.jokalariaSortu(j);
 
-        int aukeraketa = fileChooser.showOpenDialog(panela);
-        if (aukeraketa == JFileChooser.APPROVE_OPTION) {
-            File fitxategia = fileChooser.getSelectedFile();
-            aukeratutakoArgazkiPath = fitxategia.getAbsolutePath();
+			JOptionPane.showMessageDialog(panela, "Jokalaria ondo gorde da.", "Ondo", JOptionPane.INFORMATION_MESSAGE);
+			garbituFormularioa();
 
-            // Eskalatu irudia eta erakutsi miniatura
-            ImageIcon originalIcon = new ImageIcon(aukeratutakoArgazkiPath);
-            Image scaledImage = originalIcon.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
-            ImageIcon scaledIcon = new ImageIcon(scaledImage);
-            argazkiIrudiaLabel.setIcon(scaledIcon);
-            argazkiaLabel.setText("Aukeratua: " + fitxategia.getName());
-            argazkiaLabel.setForeground(Color.WHITE);
-        }
-    }
+		} catch (IllegalArgumentException ex) {
+			JOptionPane.showMessageDialog(panela, ex.getMessage(), "Errorea", JOptionPane.WARNING_MESSAGE);
+		} catch (DataAccessException ex) {
+			LoggerUtil.log("ERROR jokalaria gordetzean: " + ex.getMessage());
+			JOptionPane.showMessageDialog(panela, "Errorea datu-basean: " + ex.getMessage(), "Errorea",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception ex) {
+			LoggerUtil.log("ERROR orokorra jokalaria gordetzean: " + ex.getMessage());
+			JOptionPane.showMessageDialog(panela, "Errorea: " + ex.getMessage(), "Errorea", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
-    /**
-     * Formularioa hasierako egoerara itzultzen du.
-     */
-    private void garbituFormularioa() {
-        izenaField.setText("");
-        abizenaField.setText("");
-        nanField.setText("");
-        posizioaField.setText("");
-        pisuaField.setText("");
-        altueraField.setText("");
-        herritartasunaField.setText("");
-        taldeaCombo.setSelectedIndex(0);
-        argazkiaLabel.setText("Ez da argazkirik hautatu");
-        argazkiaLabel.setForeground(Color.LIGHT_GRAY);
-        argazkiIrudiaLabel.setIcon(null);
-        aukeratutakoArgazkiPath = null;
-    }
-
-    /**
-     * Formularioan sartutako datuak balioztatzen ditu eta jokalari berria datu-basean gordetzen du.
-     * Datuen formatua egiaztatzen du (pisua eta altuera logikoak diren zenbakiak direla bermatuz) 
-     * eta hutsik egon ezin diren ezinbesteko eremuak kontrolatzen ditu. Dena zuzen badago, 
-     * DAO-ari deitzen dio txertaketa egiteko.
-     * Argazkia hautatu bada, proiektuko 'images/Jugadores/' karpetan gordetzen da.
-     */
-    private void gordeJokalaria() {
-        try {
-            // Validar campos obligatorios
-            if (izenaField.getText().trim().isEmpty() ||
-                abizenaField.getText().trim().isEmpty() ||
-                posizioaField.getText().trim().isEmpty()) {
-                throw new IllegalArgumentException("Izena, abizena eta posizioa ezin dira hutsik egon.");
-            }
-
-            // Crear objeto Jokalaria
-            Jokalaria j = new Jokalaria();
-            j.setIzena(izenaField.getText().trim());
-            j.setAbizena(abizenaField.getText().trim());
-            j.setNan(nanField.getText().trim().isEmpty() ? null : nanField.getText().trim());
-            j.setPosizioa(posizioaField.getText().trim());
-
-            // Pisua (opcional, pero si se introduce debe ser entre 50 y 120)
-            if (!pisuaField.getText().trim().isEmpty()) {
-                try {
-                    double pisua = Double.parseDouble(pisuaField.getText().trim());
-                    if (pisua < 50 || pisua > 120) {
-                        throw new IllegalArgumentException("Pisua 50 eta 120 artean egon behar da.");
-                    }
-                    j.setPisua(BigDecimal.valueOf(pisua));
-                } catch (NumberFormatException ex) {
-                    throw new IllegalArgumentException("Pisua zenbaki bat izan behar da.");
-                }
-            }
-
-            // Altuera (opcional, pero si se introduce debe ser entre 1.50 y 2.20)
-            if (!altueraField.getText().trim().isEmpty()) {
-                try {
-                    double altuera = Double.parseDouble(altueraField.getText().trim());
-                    if (altuera < 1.50 || altuera > 2.20) {
-                        throw new IllegalArgumentException("Altuera 1.50 eta 2.20 artean egon behar da.");
-                    }
-                    j.setAltuera(BigDecimal.valueOf(altuera));
-                } catch (NumberFormatException ex) {
-                    throw new IllegalArgumentException("Altuera zenbaki bat izan behar da.");
-                }
-            }
-
-            j.setHerritartasuna(herritartasunaField.getText().trim().isEmpty() ? null : herritartasunaField.getText().trim());
-
-            // Taldea (puede ser null)
-            Taldea taldea = (Taldea) taldeaCombo.getSelectedItem();
-            j.setTaldea(taldea);
-
-            // Gestión de la foto
-            String argazkiRelativePath = null;
-            if (aukeratutakoArgazkiPath != null && !aukeratutakoArgazkiPath.isEmpty()) {
-                // Crear carpeta si no existe
-                String karpetaPath = "images/Jugadores";
-                File karpeta = new File(karpetaPath);
-                if (!karpeta.exists()) {
-                    karpeta.mkdirs();
-                }
-
-                // Generar nombre único: ID_timestamp.ext (el ID aún no lo tenemos, usamos timestamp)
-                String extension = aukeratutakoArgazkiPath.substring(aukeratutakoArgazkiPath.lastIndexOf('.'));
-                String izenBerria = "jug_" + System.currentTimeMillis() + extension;
-                File destino = new File(karpeta, izenBerria);
-
-                // Copiar archivo
-                Files.copy(new File(aukeratutakoArgazkiPath).toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                // Guardar ruta relativa (para que sea portable)
-                argazkiRelativePath = karpetaPath + "/" + izenBerria;
-            }
-            j.setArgazkia(argazkiRelativePath);
-
-            // Guardar en BD
-            boolean insertado = jokalariaDAO.jokalariaSortu(j);
-            if (!insertado) {
-                throw new Exception("Errorea jokalaria gordetzean.");
-            }
-
-            JOptionPane.showMessageDialog(panela, "Jokalaria ondo gorde da.", "Ondo", JOptionPane.INFORMATION_MESSAGE);
-            // Limpiar campos
-            garbituFormularioa();
-
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(panela, ex.getMessage(), "Errorea", JOptionPane.WARNING_MESSAGE);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(panela, "Errorea: " + ex.getMessage(), "Errorea", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace();
-        }
-    }
-
-    /**
-     * Klase honek sortutako interfaze grafikoaren panela itzultzen du,
-     * leiho nagusian (JFrame) txertatu ahal izateko.
-     * @return Jokalariak gehitzeko pantailako {@link JPanel} objektua.
-     */
-    public JPanel getPanela() {
-        return panela;
-    }
+	/**
+	 * @return Jokalariak gehitzeko panela.
+	 */
+	public JPanel getPanela() {
+		return panela;
+	}
 }

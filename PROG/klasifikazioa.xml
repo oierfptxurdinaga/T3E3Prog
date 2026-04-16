@@ -2,14 +2,14 @@
 <klasifikazioa>
     <taldea>
         <posizioa>1</posizioa>
-        <izena>Txurdinaga Harriak</izena>
-        <pj>1</pj>
-        <pg>1</pg>
+        <izena>Matiko Txirrindulariak</izena>
+        <pj>0</pj>
+        <pg>0</pg>
         <pp>0</pp>
-        <puntuak>3</puntuak>
-        <si>3</si>
-        <sg>1</sg>
-        <sd>2</sd>
+        <puntuak>0</puntuak>
+        <si>0</si>
+        <sg>0</sg>
+        <sd>0</sd>
     </taldea>
     <taldea>
         <posizioa>2</posizioa>
@@ -24,7 +24,7 @@
     </taldea>
     <taldea>
         <posizioa>3</posizioa>
-        <izena>Usansolo Ortzadak</izena>
+        <izena>Txurdinaga Harriak</izena>
         <pj>0</pj>
         <pg>0</pg>
         <pp>0</pp>
@@ -35,7 +35,7 @@
     </taldea>
     <taldea>
         <posizioa>4</posizioa>
-        <izena>Santutxu Haizeak</izena>
+        <izena>Usansolo Ortzadak</izena>
         <pj>0</pj>
         <pg>0</pg>
         <pp>0</pp>
@@ -46,7 +46,7 @@
     </taldea>
     <taldea>
         <posizioa>5</posizioa>
-        <izena>Otxarkoaga Distira</izena>
+        <izena>Santutxu Haizeak</izena>
         <pj>0</pj>
         <pg>0</pg>
         <pp>0</pp>
@@ -57,13 +57,13 @@
     </taldea>
     <taldea>
         <posizioa>6</posizioa>
-        <izena>Matiko Txirrindulariak</izena>
-        <pj>1</pj>
+        <izena>Otxarkoaga Distira</izena>
+        <pj>0</pj>
         <pg>0</pg>
-        <pp>1</pp>
+        <pp>0</pp>
         <puntuak>0</puntuak>
-        <si>1</si>
-        <sg>3</sg>
-        <sd>-2</sd>
+        <si>0</si>
+        <sg>0</sg>
+        <sd>0</sd>
     </taldea>
 </klasifikazioa>

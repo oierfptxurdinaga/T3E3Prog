@@ -3,32 +3,29 @@ package dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import pojos.Jardunaldia;
+import util.LoggerUtil;
+import util.LoggerUtil.DataAccessException;
 
 /**
- * Jardunaldia entitatearentzako Datuetarako Sarbide Objektua (DAO - Data Access Object).
- * Datu-basean jardunaldiekin lotutako eragiketak kudeatzen ditu, hala nola jardunaldiak 
- * sortzea, denboraldien arabera bilatzea eta denboraldiekin lotzea.
+ * Jardunaldia entitatearen DAO klasea. Jardunaldiekin lotutako datu-base
+ * eragiketak kudeatzen ditu.
  */
 public class JardunaldiaDAO {
-	private Konexioa konexioa; // DBrekin konektatzeko objektua
+	private Konexioa konexioa;
 
-	/**
-	 * JardunaldiaDAO klasearen eraikitzailea.
-	 * Datu-basearekiko konexioa kudeatzen duen objektua hasieratzen du.
-	 */
 	public JardunaldiaDAO() {
 		konexioa = new Konexioa();
 	}
 
 	/**
-	 * Denboraldi zehatz bati dagozkion jardunaldi guztiak eskuratzen ditu datu-basetik.
-	 * @param denboraldiaKod Bilatu nahi diren jardunaldien denboraldiaren identifikatzailea.
-	 * @return Ematen den denboraldiari lotutako {@link Jardunaldia} objektuen zerrenda (List).
+	 * Denboraldi zehatz bati dagozkion jardunaldi guztiak eskuratzen ditu.
+	 * 
+	 * @param denboraldiaKod Denboraldiaren identifikatzailea.
+	 * @return Lotutako jardunaldien zerrenda.
+	 * @throws DataAccessException Errorea badago datu-basean.
 	 */
-	// Denboraldi baten jardunaldi guztiak lortzeko metodoa
-	public List<Jardunaldia> lostuJardunaldiDenboraldiBidez(int denboraldiaKod) {
+	public List<Jardunaldia> lostuJardunaldiDenboraldiBidez(int denboraldiaKod) throws DataAccessException {
 		List<Jardunaldia> zerrenda = new ArrayList<>();
 		String sql = "SELECT j.jaurdunaldi_kod, j.hasiera_data, j.amaiera_data " + "FROM jaurdunaldia j "
 				+ "INNER JOIN denboraldia_jaurdunaldia dj ON j.jaurdunaldi_kod = dj.jaurdunaldi_kod "
@@ -36,89 +33,89 @@ public class JardunaldiaDAO {
 
 		try {
 			konexioa.konexioaIreki();
-			PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-			ps.setInt(1, denboraldiaKod); // Parametroa jarri (denboraldia ID)
-			ResultSet rs = ps.executeQuery(); // Kontsulta exekutatzeko
-
-			while (rs.next()) { // ResultSetetik datuak irakurri
-				Jardunaldia j = new Jardunaldia();
-				j.setJardunaldiKod(rs.getInt("jaurdunaldi_kod"));
-				j.setHasieraData(rs.getDate("hasiera_data"));
-				j.setAmaieraData(rs.getDate("amaiera_data"));
-				zerrenda.add(j); // Zerrendara gehitu
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setInt(1, denboraldiaKod);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						Jardunaldia j = new Jardunaldia();
+						j.setJardunaldiKod(rs.getInt("jaurdunaldi_kod"));
+						j.setHasieraData(rs.getDate("hasiera_data"));
+						j.setAmaieraData(rs.getDate("amaiera_data"));
+						zerrenda.add(j);
+					}
+				}
 			}
-
-			rs.close();
-			ps.close();
 		} catch (SQLException e) {
-			System.err.println("Errorea jardunaldiak denboraldiaren arabera irakurtzean: " + e.getMessage());
+			LoggerUtil.log("ERROR jardunaldiak lortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jardunaldiak lortzean", e);
 		} finally {
-			konexioa.konexioaItxi(); // Konexioa itxi
+			konexioa.konexioaItxi();
 		}
-
-		return zerrenda; // Jardunaldi guztien zerrenda itzuli
+		return zerrenda;
 	}
 
 	/**
-	 * Jardunaldi berri bat datu-basean sortzen du eta automatikoki esleitutako identifikatzailea lortzen du.
-	 * @param jardunaldia Sortu nahi den jardunaldiaren datuak dituen {@link Jardunaldia} objektua.
-	 * @return Sortutako jardunaldiaren identifikatzailea (ID auto-sortua), edo -1 arazoren bat egon bada.
+	 * Jardunaldi berri bat sortzen du datu-basean.
+	 * 
+	 * @param jardunaldia Sortu nahi den jardunaldia.
+	 * @return Sortutako jardunaldiaren IDa.
+	 * @throws DataAccessException Errorea badago datu-basean.
 	 */
-	// Jardunaldia sortu eta IDa lortu
-	public int jardunaldiaSortu(Jardunaldia jardunaldia) {
+	public int jardunaldiaSortu(Jardunaldia jardunaldia) throws DataAccessException {
 		String sql = "INSERT INTO jaurdunaldia (hasiera_data, amaiera_data) VALUES (?, ?)";
 
 		try {
-			konexioa.konexioaIreki(); // DB konexioa ireki
-			PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); // ID autogeneratua lortzeko
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+				ps.setDate(1, new java.sql.Date(jardunaldia.getHasieraData().getTime()));
+				ps.setDate(2, new java.sql.Date(jardunaldia.getAmaieraData().getTime()));
 
-			ps.setDate(1, new java.sql.Date(jardunaldia.getHasieraData().getTime())); // Hasiera data jarri
-			ps.setDate(2, new java.sql.Date(jardunaldia.getAmaieraData().getTime())); // Amaiera data jarri
-
-			int affected = ps.executeUpdate(); // Datuak gehitu
-			if (affected > 0) {
-				ResultSet rs = ps.getGeneratedKeys(); // ID autogeneratua lortu
-				if (rs.next()) {
-					int id = rs.getInt(1);
-					jardunaldia.setJardunaldiKod(id); // Jardunaldi objektuan gorde
-					return id; // ID itzuli
+				int affected = ps.executeUpdate();
+				if (affected == 0) {
+					throw new DataAccessException("Ez da jardunaldia sortu.");
 				}
-				rs.close();
-			}
-			ps.close();
-		} catch (SQLException e) {
-			System.err.println("Errorea jardunaldia gehitzean: " + e.getMessage());
-		} finally {
-			konexioa.konexioaItxi(); // Konexioa itxi
-		}
 
-		return -1; // Arazo bat egon bada, -1 itzuli
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						int id = rs.getInt(1);
+						jardunaldia.setJardunaldiKod(id);
+						return id;
+					}
+				}
+			}
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jardunaldia sortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jardunaldia sortzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+		throw new DataAccessException("Ez da jardunaldiaren IDa lortu.");
 	}
 
 	/**
-	 * Jardunaldi bat denboraldi zehatz batekin lotzen du datu-baseko bitarteko taula erabiliz (denboraldia_jaurdunaldia).
-	 * @param denboraldiaKod Jardunaldia lotuko zaion denboraldiaren identifikatzailea.
-	 * @param jardunaldiKod Denboraldiarekin lotu nahi den jardunaldiaren identifikatzailea.
-	 * @return true lotura ondo sortu bada, edo false arazoren bat egon bada.
+	 * Jardunaldi bat denboraldi batekin lotzen du.
+	 * 
+	 * @param denboraldiaKod Denboraldiaren identifikatzailea.
+	 * @param jardunaldiKod  Jardunaldiaren identifikatzailea.
+	 * @return true lotura ondo sortu bada.
+	 * @throws DataAccessException Errorea badago datu-basean.
 	 */
-	// Jardunaldi bat denboraldi batekin lotzeko metodoa
-	public boolean denboraldiaAsoziatu(int denboraldiaKod, int jardunaldiKod) {
+	public boolean denboraldiaAsoziatu(int denboraldiaKod, int jardunaldiKod) throws DataAccessException {
 		String sql = "INSERT INTO denboraldia_jaurdunaldia (denboraldia_kod, jaurdunaldi_kod) VALUES (?, ?)";
 
 		try {
-			konexioa.konexioaIreki(); // DB konexioa ireki
-			PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-			ps.setInt(1, denboraldiaKod); // Denboraldi ID jarri
-			ps.setInt(2, jardunaldiKod); // Jardunaldi ID jarri
-
-			int affected = ps.executeUpdate(); // Txertaketa exekutatu
-			ps.close();
-			return affected > 0; // True itzuli txertaketa ondo egon bada
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setInt(1, denboraldiaKod);
+				ps.setInt(2, jardunaldiKod);
+				int affected = ps.executeUpdate();
+				return affected > 0;
+			}
 		} catch (SQLException e) {
-			System.err.println("Errorea jardunaldia temporadarekin lotzean: " + e.getMessage());
-			return false;
+			LoggerUtil.log("ERROR jardunaldia denboraldiarekin lotzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jardunaldia denboraldiarekin lotzean", e);
 		} finally {
-			konexioa.konexioaItxi(); // Konexioa itxi
+			konexioa.konexioaItxi();
 		}
 	}
 }

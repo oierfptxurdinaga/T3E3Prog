@@ -11,7 +11,6 @@ public class Partida {
 	private int txartelak;
 	private Epailea epailea;
 
-	// Campos adicionales para facilitar la vista (no persistentes)
 	private Taldea etxekoTaldea;
 	private Taldea kanpokoTaldea;
 	private Jardunaldia jardunaldia;

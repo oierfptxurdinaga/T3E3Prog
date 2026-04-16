@@ -5,17 +5,20 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+/**
+ * Erabiltzailea entitatea. Saioa hasteko erabiltzen da. Rolak: ADMIN, EPAILEA,
+ * ERABILTZAILEA
+ */
 @Entity
 public class Erabiltzailea implements Serializable {
 
 	@Id
 	@GeneratedValue
-	private Long id; 
+	private Long id;
 
-	private String erabiltzailea; 
-	private String pasahitza; 
-	private String rola; // rolak: ADMIN, EPAILEA, ERABILTZAILE
-
+	private String erabiltzailea;
+	private String pasahitza;
+	private String rola; // ADMIN, EPAILEA, ERABILTZAILEA
 
 	public Erabiltzailea() {
 	}
@@ -54,8 +57,29 @@ public class Erabiltzailea implements Serializable {
 		this.rola = rola;
 	}
 
+	/**
+	 * @return true ADMIN bada.
+	 */
+	public boolean isAdmin() {
+		return "ADMIN".equals(rola);
+	}
+
+	/**
+	 * @return true EPAILEA bada.
+	 */
+	public boolean isEpailea() {
+		return "EPAILEA".equals(rola);
+	}
+
+	/**
+	 * @return true partidak sartzeko baimena badu (ADMIN edo EPAILEA).
+	 */
+	public boolean partidakSartuDezake() {
+		return isAdmin() || isEpailea();
+	}
+
 	@Override
 	public String toString() {
-		return "Erabiltzaileak [erabiltzailea=" + erabiltzailea + ", pasahitza=" + pasahitza + ", rola=" + rola + "]";
+		return "Erabiltzaileak [erabiltzailea=" + erabiltzailea + ", rola=" + rola + "]";
 	}
 }

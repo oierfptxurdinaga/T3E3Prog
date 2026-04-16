@@ -6,20 +6,25 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-import model.*;
+
 import dao.PartidaDAO;
 import dao.DenboraldiaDAO;
 import dao.JardunaldiaDAO;
 import pojos.Partida;
 import pojos.Denboraldia;
 import pojos.Jardunaldia;
+import util.LoggerUtil;
+import util.LoggerUtil.DataAccessException;
 
+/**
+ * Emaitzak ikusteko panela kudeatzen duen klasea.
+ */
 public class EmaitzakMetodo implements ActionListener {
 
 	private JPanel panela;
 	private Color urdina;
 	private JComboBox<Denboraldia> denboraldiaCombo;
-	private JComboBox<Object> jardunaldiaCombo; // Jardunaldia edo String ("Guztiak")
+	private JComboBox<Object> jardunaldiaCombo;
 	private JTable taula;
 	private DefaultTableModel taulaModeloa;
 
@@ -28,21 +33,24 @@ public class EmaitzakMetodo implements ActionListener {
 	private JLabel jardunaldiaEtiketa;
 
 	private JScrollPane korritzePanela;
-
 	private JButton saioaAmaituBotoia;
-
-	private JFrame frame;
 
 	private PartidaDAO partidaDAO;
 	private DenboraldiaDAO denboraldiaDAO;
 	private JardunaldiaDAO jardunaldiaDAO;
 
+	/**
+	 * EmaitzakMetodo klasearen eraikitzailea.
+	 * 
+	 * @param urdina Atzeko planoaren kolorea.
+	 */
 	public EmaitzakMetodo(Color urdina) {
 		this.urdina = urdina;
 		partidaDAO = new PartidaDAO();
 		denboraldiaDAO = new DenboraldiaDAO();
 		jardunaldiaDAO = new JardunaldiaDAO();
 
+		// Panela konfiguratu
 		panela = new JPanel(null);
 		panela.setBackground(urdina);
 
@@ -52,6 +60,7 @@ public class EmaitzakMetodo implements ActionListener {
 		titulua.setBounds(0, 40, 900, 40);
 		panela.add(titulua);
 
+		// Denboraldia aukeratzeko
 		denboraldiaEtiketa = new JLabel("Denboraldia:");
 		denboraldiaEtiketa.setForeground(Color.WHITE);
 		denboraldiaEtiketa.setFont(new Font("Arial", Font.BOLD, 16));
@@ -59,15 +68,12 @@ public class EmaitzakMetodo implements ActionListener {
 		panela.add(denboraldiaEtiketa);
 
 		denboraldiaCombo = new JComboBox<>();
-		denboraldiaCombo.addItem(new Denboraldia(0, "Guztiak", null, null, false, null, false));
-		List<Denboraldia> denboraldiak = denboraldiaDAO.denboraldiakAtera();
-		for (Denboraldia d : denboraldiak) {
-			denboraldiaCombo.addItem(d);
-		}
+		denboraldiakKargatu();
 		denboraldiaCombo.setBounds(100, 160, 180, 35);
 		denboraldiaCombo.addActionListener(this);
 		panela.add(denboraldiaCombo);
 
+		// Jardunaldia aukeratzeko
 		jardunaldiaEtiketa = new JLabel("Jardunaldia:");
 		jardunaldiaEtiketa.setForeground(Color.WHITE);
 		jardunaldiaEtiketa.setFont(new Font("Arial", Font.BOLD, 16));
@@ -80,6 +86,7 @@ public class EmaitzakMetodo implements ActionListener {
 		jardunaldiaCombo.addActionListener(this);
 		panela.add(jardunaldiaCombo);
 
+		// Taula konfiguratu
 		String[] zutabeak = { "Talde lokala", "Setak lokala", "Setak kanpokoa", "Talde kanpokoa", "Jardunaldia",
 				"Denboraldia" };
 		taulaModeloa = new DefaultTableModel(zutabeak, 0) {
@@ -97,6 +104,7 @@ public class EmaitzakMetodo implements ActionListener {
 		korritzePanela.setBounds(100, 230, 700, 220);
 		panela.add(korritzePanela);
 
+		// Saioa amaitzeko botoia
 		saioaAmaituBotoia = new JButton("Saioa amaitu");
 		saioaAmaituBotoia.setFont(new Font("Arial", Font.BOLD, 18));
 		saioaAmaituBotoia.setBackground(Color.RED);
@@ -105,7 +113,7 @@ public class EmaitzakMetodo implements ActionListener {
 		saioaAmaituBotoia.addActionListener(this);
 		panela.add(saioaAmaituBotoia);
 
-		// Hasierako jardunaldiak kargatu (lehen denboraldia hautatuta badago)
+		// Hasierako karga
 		if (denboraldiaCombo.getItemCount() > 0) {
 			denboraldiaCombo.setSelectedIndex(0);
 			kargatuJardunaldiak();
@@ -113,114 +121,167 @@ public class EmaitzakMetodo implements ActionListener {
 		kargatuEmaitzak();
 	}
 
+	/**
+	 * Denboraldien zerrenda kargatzen du combo-an.
+	 */
+	private void denboraldiakKargatu() {
+		denboraldiaCombo.removeAllItems();
+		denboraldiaCombo.addItem(new Denboraldia(0, "Guztiak", null, null, false, null, false));
+		try {
+			List<Denboraldia> denboraldiak = denboraldiaDAO.denboraldiakAtera();
+			for (Denboraldia d : denboraldiak) {
+				denboraldiaCombo.addItem(d);
+			}
+		} catch (DataAccessException e) {
+			LoggerUtil.log("ERROR denboraldiak kargatzean: " + e.getMessage());
+			JOptionPane.showMessageDialog(panela, "Errorea denboraldiak kargatzerakoan: " + e.getMessage(), "Errorea",
+					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	/**
+	 * Denboraldien zerrenda eguneratzen du (kanpotik deitzeko).
+	 */
+	public void eguneratuDenboraldiak() {
+		Denboraldia selected = (Denboraldia) denboraldiaCombo.getSelectedItem();
+		int selectedId = (selected != null) ? selected.getDenboraldiaKod() : 0;
+		denboraldiakKargatu();
+		if (selectedId != 0) {
+			for (int i = 0; i < denboraldiaCombo.getItemCount(); i++) {
+				Denboraldia d = denboraldiaCombo.getItemAt(i);
+				if (d.getDenboraldiaKod() == selectedId) {
+					denboraldiaCombo.setSelectedIndex(i);
+					return;
+				}
+			}
+		}
+		if (denboraldiaCombo.getItemCount() > 0) {
+			denboraldiaCombo.setSelectedIndex(0);
+		}
+	}
+
+	/**
+	 * Jardunaldien zerrenda kargatzen du aukeratutako denboraldiaren arabera.
+	 */
 	private void kargatuJardunaldiak() {
 		jardunaldiaCombo.removeAllItems();
 		jardunaldiaCombo.addItem("Guztiak");
 		Denboraldia selected = (Denboraldia) denboraldiaCombo.getSelectedItem();
 		if (selected != null && selected.getDenboraldiaKod() != 0) {
-			List<Jardunaldia> jardunaldiak = jardunaldiaDAO.lostuJardunaldiDenboraldiBidez(selected.getDenboraldiaKod());
-			jardunaldiak.sort((a, b) -> a.getHasieraData().compareTo(b.getHasieraData()));
-			int zenbakia = 1;
-			for (Jardunaldia j : jardunaldiak) {
-				final int num = zenbakia++;
-				Jardunaldia jWrapper = new Jardunaldia(j.getJardunaldiKod(), j.getHasieraData(), j.getAmaieraData()) {
-					@Override
-					public String toString() {
-						return "Jardunaldia " + num;
-					}
-				};
-				jardunaldiaCombo.addItem(jWrapper);
+			try {
+				List<Jardunaldia> jardunaldiak = jardunaldiaDAO
+						.lostuJardunaldiDenboraldiBidez(selected.getDenboraldiaKod());
+				jardunaldiak.sort((a, b) -> a.getHasieraData().compareTo(b.getHasieraData()));
+				int zenbakia = 1;
+				for (Jardunaldia j : jardunaldiak) {
+					final int num = zenbakia++;
+					Jardunaldia jWrapper = new Jardunaldia(j.getJardunaldiKod(), j.getHasieraData(),
+							j.getAmaieraData()) {
+						@Override
+						public String toString() {
+							return "Jardunaldia " + num;
+						}
+					};
+					jardunaldiaCombo.addItem(jWrapper);
+				}
+			} catch (DataAccessException e) {
+				LoggerUtil.log("ERROR jardunaldiak kargatzean: " + e.getMessage());
+				JOptionPane.showMessageDialog(panela, "Errorea jardunaldiak kargatzerakoan: " + e.getMessage(),
+						"Errorea", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
+	/**
+	 * Emaitzak iragazi eta taulan kargatzen ditu.
+	 */
 	private void kargatuEmaitzak() {
 		taulaModeloa.setRowCount(0);
-		List<Partida> partidak = partidaDAO.partidaGuztiak();
+		try {
+			List<Partida> partidak = partidaDAO.partidaGuztiak();
 
-		Denboraldia selectedDenb = (Denboraldia) denboraldiaCombo.getSelectedItem();
-		Object selectedJard = jardunaldiaCombo.getSelectedItem();
+			Denboraldia selectedDenb = (Denboraldia) denboraldiaCombo.getSelectedItem();
+			Object selectedJard = jardunaldiaCombo.getSelectedItem();
 
-		for (Partida p : partidak) {
-			if (p.getEtxekoTaldea() == null || p.getKanpokoTaldea() == null)
-				continue;
-
-			// Denboraldiaren iragazketa
-			if (selectedDenb != null && selectedDenb.getDenboraldiaKod() != 0) {
-				// Partidak denboraldi honetakoa den egiaztatu (jardunaldiaren bidez)
-				if (p.getJardunaldia() == null)
+			for (Partida p : partidak) {
+				// Saltatu talderik gabeko partidak
+				if (p.getEtxekoTaldea() == null || p.getKanpokoTaldea() == null)
 					continue;
-				// Egiaztatu ea jardunaldi hau denboraldi honi lotuta dagoen (DAO bidez
-				// egiaztatu genezake, baina errazago: partida lortzeko erabili dugun
-				// partidaGuztiak() metodoak ez du denboraldia ekartzen; hobe
-				// partidaLortuDenboraldiBitartez erabiltzea. Hemen, sinpleago, iragazketa
-				// egingo dugu jardunaldia zerrendan badagoen begiratuz.)
-				// Eguneraketa: hobe da partidaDAO.partidaLortuDenboraldiBitartez() erabiltzea.
-				// Baina kodea argiago mantentzeko, hemen iragazketa egiten dugu
-				// jardunaldiaren IDa konparatuz kargatutakoekin.
-				List<Jardunaldia> denbJard = jardunaldiaDAO.lostuJardunaldiDenboraldiBidez(selectedDenb.getDenboraldiaKod());
-				boolean found = false;
-				for (Jardunaldia j : denbJard) {
-					if (j.getJardunaldiKod() == p.getJardunaldia().getJardunaldiKod()) {
-						found = true;
-						break;
-					}
-				}
-				if (!found)
-					continue;
-			}
 
-			// Jardunaldiaren iragazketa
-			if (selectedJard != null && !selectedJard.equals("Guztiak")) {
-				Jardunaldia jSel = (Jardunaldia) selectedJard;
-				if (p.getJardunaldia() == null || p.getJardunaldia().getJardunaldiKod() != jSel.getJardunaldiKod())
-					continue;
-			}
-
-			String[] setak = p.getEmaitza().split("-");
-			String setakLokala = setak.length > 0 ? setak[0] : "";
-			String setakKanpokoa = setak.length > 1 ? setak[1] : "";
-
-			// Denboraldiaren izena lortu (partidak ez du denboraldia zuzenean, baina
-			// jardunaldiaren bitartez lor genezake. Sinplifikatzeko, utzi hutsik edo
-			// kalkulatu)
-			String denbIzena = "";
-			if (selectedDenb != null && selectedDenb.getDenboraldiaKod() != 0) {
-				denbIzena = selectedDenb.getIzena();
-			} else {
-				// Saiatu jardunaldiari lotutako denboraldia aurkitzen (aukera bat)
-				if (p.getJardunaldia() != null) {
-					List<Denboraldia> denbGuztiak = denboraldiaDAO.denboraldiakAtera();
-					for (Denboraldia d : denbGuztiak) {
-						List<Jardunaldia> jardList = jardunaldiaDAO.lostuJardunaldiDenboraldiBidez(d.getDenboraldiaKod());
-						for (Jardunaldia j : jardList) {
-							if (j.getJardunaldiKod() == p.getJardunaldia().getJardunaldiKod()) {
-								denbIzena = d.getIzena();
-								break;
-							}
-						}
-						if (!denbIzena.isEmpty())
+				// 1) Denboraldiaren iragazketa
+				if (selectedDenb != null && selectedDenb.getDenboraldiaKod() != 0) {
+					if (p.getJardunaldia() == null)
+						continue;
+					List<Jardunaldia> denbJard = jardunaldiaDAO
+							.lostuJardunaldiDenboraldiBidez(selectedDenb.getDenboraldiaKod());
+					boolean found = false;
+					for (Jardunaldia j : denbJard) {
+						if (j.getJardunaldiKod() == p.getJardunaldia().getJardunaldiKod()) {
+							found = true;
 							break;
+						}
+					}
+					if (!found)
+						continue;
+				}
+
+				// 2) Jardunaldiaren iragazketa
+				if (selectedJard != null && !selectedJard.equals("Guztiak")) {
+					Jardunaldia jSel = (Jardunaldia) selectedJard;
+					if (p.getJardunaldia() == null || p.getJardunaldia().getJardunaldiKod() != jSel.getJardunaldiKod())
+						continue;
+				}
+
+				// 3) Setak banatu
+				String[] setak = p.getEmaitza().split("-");
+				String setakLokala = setak.length > 0 ? setak[0] : "";
+				String setakKanpokoa = setak.length > 1 ? setak[1] : "";
+
+				// 4) Denboraldi izena lortu
+				String denbIzena = "";
+				if (selectedDenb != null && selectedDenb.getDenboraldiaKod() != 0) {
+					denbIzena = selectedDenb.getIzena();
+				} else {
+					if (p.getJardunaldia() != null) {
+						List<Denboraldia> denbGuztiak = denboraldiaDAO.denboraldiakAtera();
+						for (Denboraldia d : denbGuztiak) {
+							List<Jardunaldia> jardList = jardunaldiaDAO
+									.lostuJardunaldiDenboraldiBidez(d.getDenboraldiaKod());
+							for (Jardunaldia j : jardList) {
+								if (j.getJardunaldiKod() == p.getJardunaldia().getJardunaldiKod()) {
+									denbIzena = d.getIzena();
+									break;
+								}
+							}
+							if (!denbIzena.isEmpty())
+								break;
+						}
 					}
 				}
-			}
 
-			Object[] row = {
-				p.getEtxekoTaldea().getIzena(),
-				setakLokala,
-				setakKanpokoa,
-				p.getKanpokoTaldea().getIzena(),
-				p.getJardunaldia() != null ? p.getJardunaldia().toString() : "",
-				denbIzena
-			};
-			taulaModeloa.addRow(row);
+				// 5) Errenkada gehitu
+				Object[] row = { p.getEtxekoTaldea().getIzena(), setakLokala, setakKanpokoa,
+						p.getKanpokoTaldea().getIzena(),
+						p.getJardunaldia() != null ? p.getJardunaldia().toString() : "", denbIzena };
+				taulaModeloa.addRow(row);
+			}
+		} catch (DataAccessException e) {
+			LoggerUtil.log("ERROR emaitzak kargatzean: " + e.getMessage());
+			JOptionPane.showMessageDialog(panela, "Errorea emaitzak kargatzerakoan: " + e.getMessage(), "Errorea",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
+	/**
+	 * Taula eguneratzen du (kanpotik deitzeko).
+	 */
 	public void eguneratuTaula() {
 		kargatuEmaitzak();
 	}
 
+	/**
+	 * @return Panela.
+	 */
 	public JPanel getPanela() {
 		return panela;
 	}
@@ -228,6 +289,7 @@ public class EmaitzakMetodo implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
+
 		if (src == denboraldiaCombo) {
 			kargatuJardunaldiak();
 			kargatuEmaitzak();
@@ -235,8 +297,10 @@ public class EmaitzakMetodo implements ActionListener {
 			kargatuEmaitzak();
 		} else if (src == saioaAmaituBotoia) {
 			SwingUtilities.invokeLater(() -> new Login().setVisible(true));
-			frame = (JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource());
-			frame.dispose();
+			JFrame frame = (JFrame) SwingUtilities.getWindowAncestor((Component) e.getSource());
+			if (frame != null) {
+				frame.dispose();
+			}
 		}
 	}
 }

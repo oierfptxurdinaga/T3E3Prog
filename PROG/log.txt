@@ -57,3 +57,31 @@
 [2026-04-13 14:17:34]: [LOGUEATU] Urtzi ADMIN sartu da.
 [2026-04-13 14:22:00]: [LOGUEATU] Urtzi ADMIN sartu da.
 [2026-04-13 14:22:32]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:05:24]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:07:01]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:51:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:12:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:46:10]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:47:36]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:51:35]: XML sortu | XML fitxategia sortu da
+[2026-04-14 11:34:31]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 11:40:09]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:38:11]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:49:01]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:49:48]: XML gorde C:\Users\938841I\Documents\klasifikazioa.xml
+[2026-04-14 12:50:18]: XML kargatu C:\Users\938841I\Documents\klasifikazioa.xml
+[2026-04-14 13:06:57]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 13:17:10]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 13:17:21]: Denboraldia ezabatu 2026/2027 (ID: 5)
+[2026-04-14 13:17:28]: Denboraldia ezabatu 2025-2026 Test (ID: 2)
+[2026-04-14 13:17:34]: Denboraldia ezabatu 2020/2021 (ID: 7)
+[2026-04-14 13:17:56]: Denboraldia ezabatu 2025/2026 (ID: 4)
+[2026-04-15 10:35:04]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-15 10:37:05]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
+[2026-04-16 10:40:14] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 10:40:17] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 10:40:24] Denboraldia hasi da: 2020/2021
+[2026-04-16 10:40:34] Partida gorde da: Matiko Txirrindulariak vs Txurdinaga Harriak (3-1)
+[2026-04-16 10:44:30] Saio okerra: Oier
+[2026-04-16 10:44:37] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 10:44:39] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)

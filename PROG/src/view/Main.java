@@ -1,157 +1,156 @@
 package view;
 
 import javax.swing.*;
-import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-import dao.DenboraldiaDAO;
-import pojos.Denboraldia;
+import java.awt.*;
 import pojos.Erabiltzailea;
+import util.LoggerUtil;
 
 /**
- * Ikuspegiaren (View) geruzako klase nagusia.
- * Erabiltzaileak saioa hasi ondoren agertzen den aplikazioaren leiho nagusia (JFrame) ordezkatzen du.
- * Fitxen bidezko (JTabbedPane) nabigazio-sistema bat darabil, eta saioa hasi duen 
- * erabiltzailearen rolaren arabera (adibidez, ADMIN bada) aukera eta pantaila gehiago erakusten ditu.
+ * Ikuspegiaren (View) geruzako klase nagusia. Erabiltzaileak saioa hasi ondoren
+ * agertzen den aplikazioaren leiho nagusia.
  */
 public class Main extends JFrame {
+
 	private JPanel panelNagusia;
 	private JTabbedPane fitxaPanela;
+
+	// Panelak
 	private EmaitzakMetodo emaitzakPanela;
 	private KlasifikazioaMetodo klasifikazioaPanela;
-	private PartiduakMetodo partiduakPanela;
-	private FitxaketakMetodo fitxaketakPanela;
-	private TaldeakMetodo taldeakPanela;
+	PartiduakMetodo partiduakPanela;
+	FitxaketakMetodo fitxaketakPanela;
+	TaldeakMetodo taldeakPanela;
 	private ErabiltzaileaKudeatu erabiltzailePanela;
-	private Color urdina;
-
-	// Panel gehigarriak ADMINentzat
 	private JokalariakGehituMetodo jokalariakGehituPanela;
 	private TaldeakGehituMetodo taldeakGehituPanela;
-	private Erabiltzailea erabiltzailea;
 
-	/**
-	 * Main klasearen eraikitzailea.
-	 * Leiho nagusiaren ezaugarriak (tamaina, kolorea, posizioa) ezartzen ditu, 
-	 * aplikazioaren azpi-panel guztiak hasieratzen ditu eta fitxen (tab) egitura 
-	 * sortzen du erabiltzailearen rolaren arabera.
-	 * @param erabiltzailea Saioa hasi duen {@link Erabiltzailea} objektua, bere rola aztertu ahal izateko.
-	 */
-	public Main(Erabiltzailea erabiltzailea) {
-		this.erabiltzailea = erabiltzailea;
-		try {
-			setTitle("Boleibol Federazioa - 3. Taldea - Sistema");
-			setSize(1000, 600);
-			setLocationRelativeTo(null);
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    private Color urdina;
+    private Erabiltzailea erabiltzailea;
 
-			urdina = new Color(0, 70, 160);
+    /**
+     * Main klasearen eraikitzailea.
+     * 
+     * @param erabiltzailea Saioa hasi duen erabiltzailea.
+     */
+    public Main(Erabiltzailea erabiltzailea) {
+        this.erabiltzailea = erabiltzailea;
 
-			panelNagusia = new JPanel(new BorderLayout());
-			panelNagusia.setBackground(urdina);
-			setContentPane(panelNagusia);
+        try {
+            // Leihoa konfiguratu
+            setTitle("Boleibol Federazioa - 3. Taldea - Sistema");
+            setSize(1000, 600);
+            setLocationRelativeTo(null);
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-			fitxaPanela = new JTabbedPane();
-			fitxaPanela.setFont(new Font("Arial", Font.BOLD, 14));
+            urdina = new Color(0, 70, 160);
 
-			try {
-				// Panel komunak sortu (rol guztientzat)
-				taldeakPanela = new TaldeakMetodo(urdina);
-				klasifikazioaPanela = new KlasifikazioaMetodo(urdina);
-				emaitzakPanela = new EmaitzakMetodo(urdina);
+            panelNagusia = new JPanel(new BorderLayout());
+            panelNagusia.setBackground(urdina);
+            setContentPane(panelNagusia);
 
-				// ADMIN rolarentzako panel gehigarriak sortu
-				if (erabiltzailea.getRola().equals("ADMIN")) {
-					partiduakPanela = new PartiduakMetodo(urdina, this);
-					fitxaketakPanela = new FitxaketakMetodo(urdina);
-					jokalariakGehituPanela = new JokalariakGehituMetodo(urdina);
-					taldeakGehituPanela = new TaldeakGehituMetodo(urdina);
-					erabiltzailePanela = new ErabiltzaileaKudeatu(urdina);
+            // Fitxen panela sortu
+            fitxaPanela = new JTabbedPane();
+            fitxaPanela.setFont(new Font("Arial", Font.BOLD, 14));
 
-					// Fitxak ordena zehatzean gehitu:
-					// 1. Partiduak
-					fitxaPanela.addTab("Partiduak", partiduakPanela.getPanela());
-					// 2. Fitxaketak
-					fitxaPanela.addTab("Fitxaketak", fitxaketakPanela.getPanela());
-				}
+            try {
+                // ===== PANEL KOMUNAK (guztientzat) =====
+                taldeakPanela = new TaldeakMetodo(urdina);
+                taldeakPanela.setErabiltzailea(erabiltzailea);
+                taldeakPanela.eraikiPanela();
 
-				// Panel komunak gehitu (Taldeak, Klasifikazioa, Emaitzak)
-				// Hauek beti agertuko dira, ADMIN zein erabiltzaile arruntentzat
-				fitxaPanela.addTab("Taldeak", taldeakPanela.getPanela());
-				fitxaPanela.addTab("Klasifikazioa", klasifikazioaPanela.getPanela());
-				fitxaPanela.addTab("Emaitzak", emaitzakPanela.getPanela());
+                klasifikazioaPanela = new KlasifikazioaMetodo(urdina, erabiltzailea.isAdmin());
+                emaitzakPanela = new EmaitzakMetodo(urdina);
 
-				// ADMIN panel gehigarriak jarraitu
-				if (erabiltzailea.getRola().equals("ADMIN")) {
-					fitxaPanela.addTab("Jokalariak gehitu", jokalariakGehituPanela.getPanela());
-					fitxaPanela.addTab("Taldeak gehitu", taldeakGehituPanela.getPanela());
-					fitxaPanela.addTab("Erabiltzaileak kudeatu", erabiltzailePanela);
-				}
+                // Panel komunak gehitu
+                fitxaPanela.addTab("Taldeak", taldeakPanela.getPanela());
+                fitxaPanela.addTab("Klasifikazioa", klasifikazioaPanela.getPanela());
+                fitxaPanela.addTab("Emaitzak", emaitzakPanela.getPanela());
 
-			} catch (Exception e) {
-				System.err.println("Errorea panelak sortzerakoan: " + e.getMessage());
-				JOptionPane.showMessageDialog(this, "Errorea interfazearen osagaiak kargatzerakoan: " + e.getMessage(),
-						"Errorea", JOptionPane.ERROR_MESSAGE);
-			}
+                // ===== EPAILEA PANELAK =====
+                // Epaileek partidak sartzeko baimena dute
+                if (erabiltzailea.partidakSartuDezake()) {
+                    partiduakPanela = new PartiduakMetodo(urdina, this);
+                    fitxaPanela.addTab("Partiduak", partiduakPanela.getPanela());
+                }
 
-			// Fitxa aldatzean datuak eguneratzeko entzulea
-			fitxaPanela.addChangeListener(new ChangeListener() {
-				@Override
-				public void stateChanged(ChangeEvent e) {
-					int index = fitxaPanela.getSelectedIndex();
-					String titulua = fitxaPanela.getTitleAt(index);
-					
-					if (titulua.equals("Klasifikazioa") && klasifikazioaPanela != null) {
-						klasifikazioaPanela.eguneratuDenboraldiak();
-						klasifikazioaPanela.eguneratuTaula();
-					} else if (titulua.equals("Emaitzak") && emaitzakPanela != null) {
-						emaitzakPanela.eguneratuTaula();
-					}
-				}
-			});
+                // ===== ADMIN PANELAK =====
+                if (erabiltzailea.isAdmin()) {
+                    fitxaketakPanela = new FitxaketakMetodo(urdina);
+                    jokalariakGehituPanela = new JokalariakGehituMetodo(urdina);
+                    taldeakGehituPanela = new TaldeakGehituMetodo(urdina);
+                    erabiltzailePanela = new ErabiltzaileaKudeatu(urdina);
 
-			panelNagusia.add(fitxaPanela, BorderLayout.CENTER);
+                    fitxaPanela.addTab("Fitxaketak", fitxaketakPanela.getPanela());
+                    fitxaPanela.addTab("Jokalariak gehitu", jokalariakGehituPanela.getPanela());
+                    fitxaPanela.addTab("Taldeak gehitu", taldeakGehituPanela.getPanela());
+                    fitxaPanela.addTab("Erabiltzaileak kudeatu", erabiltzailePanela);
+                }
 
-			// Fitxen gaitasuna eguneratu (Partiduak beti gaituta, Fitxaketak beti gaituta)
-			eguneratuPestanenEgoera();
+            } catch (Exception e) {
+                LoggerUtil.log("ERROR panelak sortzerakoan: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, "Errorea interfazearen osagaiak kargatzerakoan: " + e.getMessage(),
+                        "Errorea", JOptionPane.ERROR_MESSAGE);
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Errorea aplikazio nagusia hasieratzerakoan: " + e.getMessage(),
-					"Errorea Larria", JOptionPane.ERROR_MESSAGE);
-		}
-	}
+            // ===== FITXA ALDATZEAN DATUAK EGUNERATU =====
+            fitxaPanela.addChangeListener(new ChangeListener() {
+                @Override
+                public void stateChanged(ChangeEvent e) {
+                    String titulua = fitxaPanela.getTitleAt(fitxaPanela.getSelectedIndex());
 
-	/**
-	 * Aplikazioko panel nagusietako (Klasifikazioa eta Emaitzak) datuak eta taulak berritzen ditu.
-	 * Datu-basean aldaketak egon badira informazioa eguneratuta agertzeko erabiltzen da.
-	 */
-	public void eguneratuDena() {
-		if (klasifikazioaPanela != null)
-			klasifikazioaPanela.eguneratuTaula();
-		if (emaitzakPanela != null)
-			emaitzakPanela.eguneratuTaula();
-	}
+                    if (titulua.equals("Klasifikazioa") && klasifikazioaPanela != null) {
+                        klasifikazioaPanela.eguneratuDenboraldiak();
+                        klasifikazioaPanela.eguneratuTaula();
+                    } else if (titulua.equals("Emaitzak") && emaitzakPanela != null) {
+                        emaitzakPanela.eguneratuDenboraldiak();
+                        emaitzakPanela.eguneratuTaula();
+                    } else if (titulua.equals("Taldeak") && taldeakPanela != null) {
+                        taldeakPanela.eguneratuPanela();
+                    } else if (titulua.equals("Fitxaketak") && fitxaketakPanela != null) {
+                        fitxaketakPanela.eguneratuEgoera();
+                    } else if (titulua.equals("Partiduak") && partiduakPanela != null) {
+                        partiduakPanela.eguneratuTaldeak();
+                    }
+                }
+            });
 
-	/**
-	 * Fitxen gaitasuna eguneratzen du.
-	 * Partiduak eta Fitxaketak beti gaituta egongo dira.
-	 * Partida sartzeko edo fitxaketa egiteko balidazioa panel bakoitzean egiten da.
-	 */
-	public void eguneratuPestanenEgoera() {
-		// Fitxa guztiak gaituta mantendu
-		for (int i = 0; i < fitxaPanela.getTabCount(); i++) {
-			fitxaPanela.setEnabledAt(i, true);
-		}
-	}
+            panelNagusia.add(fitxaPanela, BorderLayout.CENTER);
+            eguneratuPestanenEgoera();
 
-	/**
-	 * Aplikazioa klase honetatik zuzenean abiarazteko metodoa. 
-	 * Berez saioa hasteko leihoa (Login) irekitzen du.
-	 * @param args Komando-lerroko argumentuak.
-	 */
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(() -> new Login().setVisible(true));
-	}
+            LoggerUtil.log("Aplikazio nagusia ireki da - Erabiltzailea: " + erabiltzailea.getErabiltzailea() + " (" + erabiltzailea.getRola() + ")");
+
+        } catch (Exception e) {
+            LoggerUtil.log("ERROR aplikazio nagusia hasieratzerakoan: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Errorea aplikazio nagusia hasieratzerakoan: " + e.getMessage(),
+                    "Errorea Larria", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Klasifikazioa eta Emaitzak panelak eguneratzen ditu.
+     */
+    public void eguneratuDena() {
+        if (klasifikazioaPanela != null)
+            klasifikazioaPanela.eguneratuTaula();
+        if (emaitzakPanela != null)
+            emaitzakPanela.eguneratuTaula();
+    }
+
+    /**
+     * Fitxa guztiak gaituta mantentzen ditu.
+     */
+    public void eguneratuPestanenEgoera() {
+        for (int i = 0; i < fitxaPanela.getTabCount(); i++) {
+            fitxaPanela.setEnabledAt(i, true);
+        }
+    }
+
+    /**
+     * Aplikazioa abiarazteko metodoa.
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new Login().setVisible(true));
+    }
 }

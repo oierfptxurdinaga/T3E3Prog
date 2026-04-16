@@ -4,306 +4,290 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-
 import pojos.Jokalaria;
 import pojos.Taldea;
+import util.LoggerUtil;
+import util.LoggerUtil.DataAccessException;
 
 /**
- * Jokalaria entitatearentzako Datuetarako Sarbide Objektua (DAO - Data Access Object).
- * Datu-basean jokalariekin lotutako eragiketak kudeatzen ditu, hala nola jokalariak 
- * sortzea, zerrendatzea, bilatzea, datuak eguneratzea eta ezabatzea.
+ * Jokalaria entitatearen DAO klasea. Jokalariekin lotutako datu-base eragiketak
+ * kudeatzen ditu.
  */
 public class JokalariaDAO {
-    private Konexioa konexioa; // Datu-basearekin konektatzeko objektua
+	private Konexioa konexioa;
 
-    /**
-     * JokalariaDAO klasearen eraikitzailea.
-     * Datu-basearekiko konexioa kudeatzen duen objektua hasieratzen du.
-     */
-    public JokalariaDAO() {
-        konexioa = new Konexioa(); // Konstruktorean konekzioa sortu
-    }
+	public JokalariaDAO() {
+		konexioa = new Konexioa();
+	}
 
-    /**
-     * Jokalari berri bat sortzen du datu-basean eta automatikoki esleitutako IDa lortzen du.
-     * @param jokalaria Sortu nahi den jokalariaren datuak dituen {@link Jokalaria} objektua.
-     * @return true jokalaria modu egokian sortu bada, edo false arazoren bat egon bada.
-     */
-    // Jokalari berri bat sortzeko metodoa
-    public boolean jokalariaSortu(Jokalaria jokalaria) {
-        String sql = "INSERT INTO jokalariak (izena, abizena, NAN, posizioa, pisua, altuera, herritartasuna, taldea_kod, argazkia) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            konexioa.konexioaIreki(); // DB konexioa ireki
-            PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+	/**
+	 * Jokalari berri bat datu-basean gordetzen du.
+	 * 
+	 * @param jokalaria Gorde nahi den jokalaria.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public void jokalariaSortu(Jokalaria jokalaria) throws DataAccessException {
+		String sql = "INSERT INTO jokalariak (izena, abizena, NAN, posizioa, pisua, altuera, herritartasuna, taldea_kod, argazkia) "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		try {
+			konexioa.konexioaIreki();
+			Connection conn = konexioa.getKonexioa();
+			try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+				ps.setString(1, jokalaria.getIzena());
+				ps.setString(2, jokalaria.getAbizena());
+				ps.setString(3, jokalaria.getNan());
+				ps.setString(4, jokalaria.getPosizioa());
+				ps.setBigDecimal(5, jokalaria.getPisua());
+				ps.setBigDecimal(6, jokalaria.getAltuera());
+				ps.setString(7, jokalaria.getHerritartasuna());
 
-            // Parametroak jarri
-            ps.setString(1, jokalaria.getIzena());
-            ps.setString(2, jokalaria.getAbizena());
-            ps.setString(3, jokalaria.getNan());
-            ps.setString(4, jokalaria.getPosizioa());
-            ps.setBigDecimal(5, jokalaria.getPisua());
-            ps.setBigDecimal(6, jokalaria.getAltuera());
-            ps.setString(7, jokalaria.getHerritartasuna());
+				if (jokalaria.getTaldea() != null) {
+					ps.setInt(8, jokalaria.getTaldea().getTaldeaKod());
+				} else {
+					ps.setNull(8, Types.INTEGER);
+				}
+				ps.setString(9, jokalaria.getArgazkia());
 
-            // Taldea ez bada null, ID-a jarri, bestela null
-            if (jokalaria.getTaldea() != null) {
-                ps.setInt(8, jokalaria.getTaldea().getTaldeaKod());
-            } else {
-                ps.setNull(8, java.sql.Types.INTEGER);
-            }
+				int affected = ps.executeUpdate();
+				if (affected == 0) {
+					throw new DataAccessException("Ez da jokalaria txertatu.");
+				}
+				try (ResultSet rs = ps.getGeneratedKeys()) {
+					if (rs.next()) {
+						jokalaria.setJokalariakKod(rs.getInt(1));
+					}
+				}
+			}
+			LoggerUtil.log("Jokalaria sortu da: " + jokalaria.getIzena() + " " + jokalaria.getAbizena() + " (ID: "
+					+ jokalaria.getJokalariakKod() + ")");
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalaria sortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalaria sortzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+	}
 
-            // Argazkiaren bidea (null izan daiteke)
-            ps.setString(9, jokalaria.getArgazkia());
+	/**
+	 * Datu-basean dauden jokalari guztiak lortzen ditu, taldearen datuekin.
+	 * 
+	 * @return Jokalarien zerrenda.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public List<Jokalaria> jokalariGuztiakLortu() throws DataAccessException {
+		List<Jokalaria> zerrenda = new ArrayList<>();
+		String sql = "SELECT j.jokalariak_kod, j.izena, j.abizena, j.NAN, j.posizioa, j.pisua, j.altuera, "
+				+ "j.herritartasuna, j.taldea_kod, j.argazkia, t.izena AS talde_izena "
+				+ "FROM jokalariak j LEFT JOIN taldea t ON j.taldea_kod = t.taldea_kod";
 
-            int affected = ps.executeUpdate(); // Datuak gehitu
+		try {
+			konexioa.konexioaIreki();
+			try (Statement st = konexioa.getKonexioa().createStatement(); ResultSet rs = st.executeQuery(sql)) {
+				while (rs.next()) {
+					Jokalaria j = mapeatuJokalaria(rs);
+					zerrenda.add(j);
+				}
+			}
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalariak lortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalariak lortzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+		return zerrenda;
+	}
 
-            // ID autogeneratua jokalari objektuan gorde
-            if (affected > 0) {
-                ResultSet rs = ps.getGeneratedKeys();
-                
-                if (rs.next())  {
-                    jokalaria.setJokalariakKod(rs.getInt(1));
-                    rs.close();
-                }
-            }
+	/**
+	 * Jokalari bat bilatzen du bere IDaren arabera.
+	 * 
+	 * @param jokalariakKod Jokalariaren identifikatzailea.
+	 * @return Aurkitutako jokalaria, edo null.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public Jokalaria jokalariaLortuIdBidez(int jokalariakKod) throws DataAccessException {
+		String sql = "SELECT j.jokalariak_kod, j.izena, j.abizena, j.NAN, j.posizioa, j.pisua, j.altuera, "
+				+ "j.herritartasuna, j.taldea_kod, j.argazkia, t.izena AS talde_izena "
+				+ "FROM jokalariak j LEFT JOIN taldea t ON j.taldea_kod = t.taldea_kod " + "WHERE j.jokalariak_kod = ?";
 
-            ps.close();
-            return affected > 0; // True itzuli insert ondo egon bada
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalaria gehitzean: " + e.getMessage());
-            return false;
-        } finally {
-            konexioa.konexioaItxi(); // Beti konexioa itxi
-        }
-    }
+		try {
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setInt(1, jokalariakKod);
+				try (ResultSet rs = ps.executeQuery()) {
+					if (rs.next()) {
+						return mapeatuJokalaria(rs);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalaria IDz lortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalaria lortzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+		return null;
+	}
 
-    /**
-     * Datu-basean erregistratuta dauden jokalari guztiak eskuratzen ditu, bakoitzaren taldearen datuekin (baleuka).
-     * @return {@link Jokalaria} objektuen zerrenda (List).
-     */
-    // Datu-baseko jokalari guztiak lortu
-    public List<Jokalaria> jokalariGuztiakLortu() {
-        List<Jokalaria> zerrenda = new ArrayList<>();
-        String sql = "SELECT j.jokalariak_kod, j.izena, j.abizena, j.NAN, j.posizioa, j.pisua, j.altuera, j.herritartasuna, j.taldea_kod, j.argazkia, "
-                   + "t.izena as talde_izena FROM jokalariak j LEFT JOIN taldea t ON j.taldea_kod = t.taldea_kod";
+	/**
+	 * Talde bateko jokalari guztiak lortzen ditu.
+	 * 
+	 * @param taldeaKod Taldearen identifikatzailea.
+	 * @return Taldeko jokalarien zerrenda.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public List<Jokalaria> jokalariaLortuTaldeBidez(int taldeaKod) throws DataAccessException {
+		List<Jokalaria> zerrenda = new ArrayList<>();
+		String sql = "SELECT jokalariak_kod, izena, abizena, NAN, posizioa, pisua, altuera, herritartasuna, argazkia "
+				+ "FROM jokalariak WHERE taldea_kod = ?";
 
-        try {
-            konexioa.konexioaIreki();
-            Statement st = konexioa.getKonexioa().createStatement();
-            ResultSet rs = st.executeQuery(sql);
+		try {
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setInt(1, taldeaKod);
+				try (ResultSet rs = ps.executeQuery()) {
+					while (rs.next()) {
+						Jokalaria j = new Jokalaria();
+						j.setJokalariakKod(rs.getInt("jokalariak_kod"));
+						j.setIzena(rs.getString("izena"));
+						j.setAbizena(rs.getString("abizena"));
+						j.setNan(rs.getString("NAN"));
+						j.setPosizioa(rs.getString("posizioa"));
+						j.setPisua(rs.getBigDecimal("pisua"));
+						j.setAltuera(rs.getBigDecimal("altuera"));
+						j.setHerritartasuna(rs.getString("herritartasuna"));
+						j.setArgazkia(rs.getString("argazkia"));
+						zerrenda.add(j);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalariak taldeka lortzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalariak taldeka lortzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+		return zerrenda;
+	}
 
-            while (rs.next()) {
-                Jokalaria j = new Jokalaria();
-                j.setJokalariakKod(rs.getInt("jokalariak_kod"));
-                j.setIzena(rs.getString("izena"));
-                j.setAbizena(rs.getString("abizena"));
-                j.setNan(rs.getString("NAN"));
-                j.setPosizioa(rs.getString("posizioa"));
-                j.setPisua(rs.getBigDecimal("pisua"));
-                j.setAltuera(rs.getBigDecimal("altuera"));
-                j.setHerritartasuna(rs.getString("herritartasuna"));
-                j.setArgazkia(rs.getString("argazkia"));
+	/**
+	 * Jokalari baten datuak eguneratzen ditu.
+	 * 
+	 * @param jokalaria Eguneratutako datuak dituen jokalaria.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public void eguneratu(Jokalaria jokalaria) throws DataAccessException {
+		String sql = "UPDATE jokalariak SET izena = ?, abizena = ?, NAN = ?, posizioa = ?, pisua = ?, "
+				+ "altuera = ?, herritartasuna = ?, taldea_kod = ?, argazkia = ? WHERE jokalariak_kod = ?";
 
-                // Taldea ez bada null, jokalariari jarri
-                int taldeaKod = rs.getInt("taldea_kod");
-                if (!rs.wasNull()) {
-                    Taldea t = new Taldea();
-                    t.setTaldeaKod(taldeaKod);
-                    t.setIzena(rs.getString("talde_izena"));
-                    j.setTaldea(t);
-                }
+		try {
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setString(1, jokalaria.getIzena());
+				ps.setString(2, jokalaria.getAbizena());
+				ps.setString(3, jokalaria.getNan());
+				ps.setString(4, jokalaria.getPosizioa());
+				ps.setBigDecimal(5, jokalaria.getPisua());
+				ps.setBigDecimal(6, jokalaria.getAltuera());
+				ps.setString(7, jokalaria.getHerritartasuna());
 
-                zerrenda.add(j); // Zerrendara gehitu
-            }
+				if (jokalaria.getTaldea() != null) {
+					ps.setInt(8, jokalaria.getTaldea().getTaldeaKod());
+				} else {
+					ps.setNull(8, Types.INTEGER);
+				}
 
-            rs.close();
-            st.close();
-            
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalariak irakurtzean: " + e.getMessage());
-        } finally {
-            konexioa.konexioaItxi();
-        }
+				ps.setString(9, jokalaria.getArgazkia());
+				ps.setInt(10, jokalaria.getJokalariakKod());
 
-        return zerrenda;
-    }
+				int affected = ps.executeUpdate();
+				if (affected == 0) {
+					throw new DataAccessException("Ez da jokalaririk eguneratu (ID ez da aurkitu).");
+				}
+			}
+			LoggerUtil.log("Jokalaria eguneratu da: " + jokalaria.getIzena() + " " + jokalaria.getAbizena() + " (ID: "
+					+ jokalaria.getJokalariakKod() + ")");
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalaria eguneratzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalaria eguneratzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+	}
 
-    /**
-     * Jokalari zehatz bat bilatzen du datu-basean bere identifikatzaile bakarra erabiliz.
-     * @param jokalariakKod Bilatu nahi den jokalariaren identifikatzailea (ID).
-     * @return Aurkitutako {@link Jokalaria} objektua datu guztiekin, edo null ez bada aurkitzen.
-     */
-    // IDz jokalaria lortu
-    public Jokalaria jokalariaLortuIdBidez(int jokalariakKod) {
-        Jokalaria j = null;
-        String sql = "SELECT j.jokalariak_kod, j.izena, j.abizena, j.NAN, j.posizioa, j.pisua, j.altuera, j.herritartasuna, j.taldea_kod, j.argazkia, "
-                   + "t.izena as talde_izena FROM jokalariak j LEFT JOIN taldea t ON j.taldea_kod = t.taldea_kod "
-                   + "WHERE j.jokalariak_kod = ?";
+	/**
+	 * Jokalari bat talde berri batera traspasatzen du.
+	 * 
+	 * @param jokalaria     Traspasatu nahi den jokalaria.
+	 * @param taldeHelburua Jokalaria joango den taldea.
+	 * @throws DataAccessException      Errorea badago datu-basean.
+	 * @throws IllegalArgumentException Jokalaria edo taldea null badira, edo jada
+	 *                                  talde horretan badago.
+	 */
+	public void traspasatu(Jokalaria jokalaria, Taldea taldeHelburua) throws DataAccessException {
+		if (jokalaria == null || taldeHelburua == null) {
+			throw new IllegalArgumentException("Jokalaria eta talde helburua ezin dira null izan.");
+		}
+		if (jokalaria.getTaldea() != null && jokalaria.getTaldea().getTaldeaKod() == taldeHelburua.getTaldeaKod()) {
+			throw new IllegalArgumentException("Jokalaria dagoeneko talde horretan dago.");
+		}
 
-        try {
-            konexioa.konexioaIreki();
-            PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-            ps.setInt(1, jokalariakKod);
-            ResultSet rs = ps.executeQuery();
+		String taldeZaharraIzena = jokalaria.getTaldea() != null ? jokalaria.getTaldea().getIzena() : "Talde gabe";
+		jokalaria.setTaldea(taldeHelburua);
+		eguneratu(jokalaria);
 
-            if (rs.next()) {
-                j = new Jokalaria();
-                j.setJokalariakKod(rs.getInt("jokalariak_kod"));
-                j.setIzena(rs.getString("izena"));
-                j.setAbizena(rs.getString("abizena"));
-                j.setNan(rs.getString("NAN"));
-                j.setPosizioa(rs.getString("posizioa"));
-                j.setPisua(rs.getBigDecimal("pisua"));
-                j.setAltuera(rs.getBigDecimal("altuera"));
-                j.setHerritartasuna(rs.getString("herritartasuna"));
-                j.setArgazkia(rs.getString("argazkia"));
+		LoggerUtil.log("Traspasoa: " + jokalaria.getIzena() + " " + jokalaria.getAbizena() + " -> " + taldeZaharraIzena
+				+ "-tik " + taldeHelburua.getIzena() + "-ra");
+	}
 
-                int taldeaKod = rs.getInt("taldea_kod");
-                if (!rs.wasNull()) {
-                    Taldea t = new Taldea();
-                    t.setTaldeaKod(taldeaKod);
-                    t.setIzena(rs.getString("talde_izena"));
-                    j.setTaldea(t);
-                }
-            }
+	/**
+	 * Jokalari bat ezabatzen du bere IDaren arabera.
+	 * 
+	 * @param jokalariakKod Ezabatu nahi den jokalariaren IDa.
+	 * @throws DataAccessException Errorea badago datu-basean.
+	 */
+	public void jokalariaEzabatu(int jokalariakKod) throws DataAccessException {
+		String sql = "DELETE FROM jokalariak WHERE jokalariak_kod = ?";
 
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalaria IDz irakurtzean: " + e.getMessage());
-        } finally {
-            konexioa.konexioaItxi();
-        }
+		try {
+			konexioa.konexioaIreki();
+			try (PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql)) {
+				ps.setInt(1, jokalariakKod);
+				int affected = ps.executeUpdate();
+				if (affected == 0) {
+					throw new DataAccessException("Ez da jokalaririk ezabatu (ID ez da aurkitu).");
+				}
+			}
+			LoggerUtil.log("Jokalaria ezabatu da (ID: " + jokalariakKod + ")");
+		} catch (SQLException e) {
+			LoggerUtil.log("ERROR jokalaria ezabatzean: " + e.getMessage());
+			throw new DataAccessException("Errorea jokalaria ezabatzean", e);
+		} finally {
+			konexioa.konexioaItxi();
+		}
+	}
 
-        return j;
-    }
+	/**
+	 * ResultSet batetik Jokalaria objektua sortzen du (taldearekin).
+	 */
+	private Jokalaria mapeatuJokalaria(ResultSet rs) throws SQLException {
+		Jokalaria j = new Jokalaria();
+		j.setJokalariakKod(rs.getInt("jokalariak_kod"));
+		j.setIzena(rs.getString("izena"));
+		j.setAbizena(rs.getString("abizena"));
+		j.setNan(rs.getString("NAN"));
+		j.setPosizioa(rs.getString("posizioa"));
+		j.setPisua(rs.getBigDecimal("pisua"));
+		j.setAltuera(rs.getBigDecimal("altuera"));
+		j.setHerritartasuna(rs.getString("herritartasuna"));
+		j.setArgazkia(rs.getString("argazkia"));
 
-    /**
-     * Talde zehatz bateko jokalari guztiak lortzen ditu datu-basetik.
-     * @param taldeaKod Bilatu nahi diren jokalarien taldearen identifikatzailea.
-     * @return Ematen den taldeari lotutako {@link Jokalaria} objektuen zerrenda (List).
-     */
-    // Talde bateko jokalariak lortu
-    public List<Jokalaria> jokalariaLortuTaldeBidez(int taldeaKod) {
-        List<Jokalaria> zerrenda = new ArrayList<>();
-        String sql = "SELECT jokalariak_kod, izena, abizena, NAN, posizioa, pisua, altuera, herritartasuna, argazkia "
-                   + "FROM jokalariak WHERE taldea_kod = ?";
-
-        try {
-            konexioa.konexioaIreki();
-            PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-            ps.setInt(1, taldeaKod);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Jokalaria j = new Jokalaria();
-                j.setJokalariakKod(rs.getInt("jokalariak_kod"));
-                j.setIzena(rs.getString("izena"));
-                j.setAbizena(rs.getString("abizena"));
-                j.setNan(rs.getString("NAN"));
-                j.setPosizioa(rs.getString("posizioa"));
-                j.setPisua(rs.getBigDecimal("pisua"));
-                j.setAltuera(rs.getBigDecimal("altuera"));
-                j.setHerritartasuna(rs.getString("herritartasuna"));
-                j.setArgazkia(rs.getString("argazkia"));
-                zerrenda.add(j);
-            }
-
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalariak taldearen arabera irakurtzean: " + e.getMessage());
-        } finally {
-            konexioa.konexioaItxi();
-        }
-
-        return zerrenda;
-    }
-
-    /**
-     * Existitzen den jokalari baten datuak eguneratzen ditu datu-basean.
-     * @param jokalaria Eguneratu nahi diren datu berriak dituen {@link Jokalaria} objektua.
-     * @return true eguneraketa modu egokian burutu bada, edo false arazoren bat egon bada.
-     */
-    // Jokalari baten datuak eguneratu
-    public boolean eguneratu(Jokalaria jokalaria) {
-        String sql = "UPDATE jokalariak SET izena = ?, abizena = ?, NAN = ?, posizioa = ?, pisua = ?, altuera = ?, herritartasuna = ?, taldea_kod = ?, argazkia = ? "
-                   + "WHERE jokalariak_kod = ?";
-
-        try {
-            konexioa.konexioaIreki();
-            PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-
-            ps.setString(1, jokalaria.getIzena());
-            ps.setString(2, jokalaria.getAbizena());
-            ps.setString(3, jokalaria.getNan());
-            ps.setString(4, jokalaria.getPosizioa());
-            ps.setBigDecimal(5, jokalaria.getPisua());
-            ps.setBigDecimal(6, jokalaria.getAltuera());
-            ps.setString(7, jokalaria.getHerritartasuna());
-
-            if (jokalaria.getTaldea() != null)
-                ps.setInt(8, jokalaria.getTaldea().getTaldeaKod());
-            else
-                ps.setNull(8, java.sql.Types.INTEGER);
-
-            ps.setString(9, jokalaria.getArgazkia());
-            ps.setInt(10, jokalaria.getJokalariakKod());
-
-            int affected = ps.executeUpdate();
-            ps.close();
-            return affected > 0;
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalaria eguneratzean: " + e.getMessage());
-            return false;
-        } finally {
-            konexioa.konexioaItxi();
-        }
-    }
-
-    /**
-     * Jokalari bat talde berri batera aldatzen du (traspasoa). Egiaztatzen du jokalaria 
-     * eta taldea null ez direla eta jokalaria ez dagoela jada talde horretan bertan.
-     * @param jokalaria Traspasatu nahi den {@link Jokalaria} objektua.
-     * @param taldeHelburua Jokalaria joango den {@link Taldea} objektu berria.
-     * @return true traspasoa ondo burutu bada, edo false arazoren bat egon bada.
-     * @throws IllegalArgumentException Jokalaria edo taldea null badira, edo jokalaria jada talde horretan badago.
-     */
-    // Jokalaria talde berri batera traspasatu
-    public boolean traspasatu(Jokalaria jokalaria, Taldea taldeHelburua) {
-        if (jokalaria == null || taldeHelburua == null)
-            throw new IllegalArgumentException("Jokalaria eta talde helburua ezin dira null izan.");
-        if (jokalaria.getTaldea() != null && jokalaria.getTaldea().getTaldeaKod() == taldeHelburua.getTaldeaKod())
-            throw new IllegalArgumentException("Jokalaria dagoeneko talde horretan dago.");
-
-        jokalaria.setTaldea(taldeHelburua); // 🔹 Taldea aldatu
-        return eguneratu(jokalaria);           // 🔹 Datu-basean eguneratu
-    }
-
-    /**
-     * Jokalari bat datu-basetik guztiz ezabatzen du bere identifikatzailea erabiliz.
-     * @param jokalariakKod Ezabatu nahi den jokalariaren identifikatzailea (ID).
-     * @return true ezabaketa modu egokian burutu bada, edo false arazoren bat egon bada.
-     */
-    // 🔹 Jokalaria ezabatu
-    public boolean jokalariaEzabatu(int jokalariakKod) {
-        String sql = "DELETE FROM jokalariak WHERE jokalariak_kod = ?";
-        
-        try {
-            konexioa.konexioaIreki();
-            PreparedStatement ps = konexioa.getKonexioa().prepareStatement(sql);
-            
-            ps.setInt(1, jokalariakKod);
-            int affected = ps.executeUpdate();
-            ps.close();
-            return affected > 0;
-            
-        } catch (SQLException e) {
-            System.err.println("Errorea jokalaria ezabatzean: " + e.getMessage());
-            return false;
-        } finally {
-            konexioa.konexioaItxi();
-        }
-    }
+		int taldeaKod = rs.getInt("taldea_kod");
+		if (!rs.wasNull()) {
+			Taldea t = new Taldea();
+			t.setTaldeaKod(taldeaKod);
+			t.setIzena(rs.getString("talde_izena"));
+			j.setTaldea(t);
+		}
+		return j;
+	}
 }
