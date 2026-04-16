@@ -85,3 +85,15 @@
 [2026-04-16 10:44:30] Saio okerra: Oier
 [2026-04-16 10:44:37] Saioa hasi da: Oier (EPAILEA)
 [2026-04-16 10:44:39] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
+[2026-04-16 12:46:41] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:46:44] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:46:59] Denboraldia amaitu da
+[2026-04-16 12:47:00] Denboraldia amaitu da: 2020/2021
+[2026-04-16 12:47:14] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 12:47:16] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
+[2026-04-16 12:53:25] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:53:28] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:56:43] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:56:46] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:56:59] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 12:57:01] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
