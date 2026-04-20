@@ -1,0 +1,99 @@
+[2026-03-26 12:52:51]: LOGUEATU | Irati ADMIN sartu da.
+[2026-03-26 12:53:02]: user ezabatu da. ERABILTZAILEA
+[2026-03-26 14:10:26]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-26 14:26:35]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-26 14:29:13]: [LOGUEATU] Ekaitz ADMIN sartu da.
+[2026-03-26 14:30:40]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-03-27 08:33:20]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 08:47:53]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-03-27 09:23:55]: [LOGUEATU] Ekaitz ADMIN sartu da.
+[2026-03-27 09:29:28]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:34:29]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:38:52]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:43:05]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:44:18]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:57:16]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 09:59:52]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:01:14]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:01:45]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:02:19]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:02:50]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:03:15]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:06:19]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:11:12]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:15:33]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:16:48]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:19:42]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-03-27 10:20:38]: [LOGUEATU] Raquel ERABILTZAILEA sartu da.
+[2026-03-27 10:44:41]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-03-27 10:45:42]: [LOGUEATU] Raquel ERABILTZAILEA sartu da.
+[2026-03-27 10:48:39]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-03-27 10:49:38]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
+[2026-04-13 08:26:51]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 08:50:06]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 08:51:05]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 08:58:14]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 09:09:05]: [LOGUEATU] Ekaitz ADMIN sartu da.
+[2026-04-13 09:10:35]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 09:11:24]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
+[2026-04-13 09:11:51]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 09:12:18]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 09:12:48]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
+[2026-04-13 09:13:02]: [LOGUEATU] Irati ADMIN sartu da.
+[2026-04-13 10:28:06]: [LOGUEATU] urtzi ERABILTZAILEA sartu da.
+[2026-04-13 12:37:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 12:42:42]: XML sortu | XML fitxategia sortu da
+[2026-04-13 12:51:05]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 12:56:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:12:41]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:31:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:33:18]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:45:22]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:54:55]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 13:58:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:02:26]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:09:31]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:11:44]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:17:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:22:00]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-13 14:22:32]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:05:24]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:07:01]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 09:51:34]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:12:56]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:46:10]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:47:36]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 10:51:35]: XML sortu | XML fitxategia sortu da
+[2026-04-14 11:34:31]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 11:40:09]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:38:11]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:49:01]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 12:49:48]: XML gorde C:\Users\938841I\Documents\klasifikazioa.xml
+[2026-04-14 12:50:18]: XML kargatu C:\Users\938841I\Documents\klasifikazioa.xml
+[2026-04-14 13:06:57]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 13:17:10]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-14 13:17:21]: Denboraldia ezabatu 2026/2027 (ID: 5)
+[2026-04-14 13:17:28]: Denboraldia ezabatu 2025-2026 Test (ID: 2)
+[2026-04-14 13:17:34]: Denboraldia ezabatu 2020/2021 (ID: 7)
+[2026-04-14 13:17:56]: Denboraldia ezabatu 2025/2026 (ID: 4)
+[2026-04-15 10:35:04]: [LOGUEATU] Urtzi ADMIN sartu da.
+[2026-04-15 10:37:05]: [LOGUEATU] Maite ERABILTZAILEA sartu da.
+[2026-04-16 10:40:14] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 10:40:17] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 10:40:24] Denboraldia hasi da: 2020/2021
+[2026-04-16 10:40:34] Partida gorde da: Matiko Txirrindulariak vs Txurdinaga Harriak (3-1)
+[2026-04-16 10:44:30] Saio okerra: Oier
+[2026-04-16 10:44:37] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 10:44:39] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
+[2026-04-16 12:46:41] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:46:44] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:46:59] Denboraldia amaitu da
+[2026-04-16 12:47:00] Denboraldia amaitu da: 2020/2021
+[2026-04-16 12:47:14] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 12:47:16] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
+[2026-04-16 12:53:25] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:53:28] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:56:43] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-16 12:56:46] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-16 12:56:59] Saioa hasi da: Oier (EPAILEA)
+[2026-04-16 12:57:01] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
