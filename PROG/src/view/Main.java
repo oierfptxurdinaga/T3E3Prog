@@ -39,7 +39,7 @@ public class Main extends JFrame {
 
 		try {
 			// Leihoa konfiguratu
-			setTitle("Boleibol Federazioa - 3. Taldea - Sistema");
+			setTitle("Boleibol Federazioa - 3. Taldea");
 			setSize(1000, 600);
 			setLocationRelativeTo(null);
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

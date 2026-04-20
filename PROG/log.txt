@@ -97,3 +97,13 @@
 [2026-04-16 12:56:46] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
 [2026-04-16 12:56:59] Saioa hasi da: Oier (EPAILEA)
 [2026-04-16 12:57:01] Aplikazio nagusia ireki da - Erabiltzailea: Oier (EPAILEA)
+[2026-04-20 08:16:21] Saioa hasi da: Urtzi (ADMIN)
+[2026-04-20 08:16:25] Aplikazio nagusia ireki da - Erabiltzailea: Urtzi (ADMIN)
+[2026-04-20 08:16:51] Denboraldia hasi da: 2027/2028
+[2026-04-20 08:17:05] Denboraldia amaitu da
+[2026-04-20 08:17:06] Denboraldia amaitu da: 2027/2028
+[2026-04-20 08:17:14] Jokalaria eguneratu da: Javier Aguirre (ID: 5)
+[2026-04-20 08:17:14] Traspasoa: Javier Aguirre -> Talde gabe-tik Usansolo Ortzadak-ra
+[2026-04-20 08:17:30] Denboraldia ezabatu da: 1999/2000 (ID: 9)
+[2026-04-20 08:17:49] XML kargatu da: C:\Users\938841I\Documents\klasifikazioa.xml
+[2026-04-20 08:18:25] Taldea eguneratu da: Matiko Txirrindulariak (ID: 1)

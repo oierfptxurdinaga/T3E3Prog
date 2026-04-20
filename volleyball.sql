@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 16-03-2026 a las 11:45:05
+-- Tiempo de generación: 20-04-2026 a las 09:34:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -31,15 +31,22 @@ CREATE TABLE `denboraldia` (
   `denboraldia_kod` int(11) NOT NULL,
   `izena` varchar(50) NOT NULL,
   `hasiera_data` date DEFAULT NULL,
-  `amaiera_data` date DEFAULT NULL
+  `amaiera_data` date DEFAULT NULL,
+  `aktiboa` tinyint(1) DEFAULT 0,
+  `amaituta` tinyint(1) DEFAULT 0,
+  `txapelduna` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `denboraldia`
 --
 
-INSERT INTO `denboraldia` (`denboraldia_kod`, `izena`, `hasiera_data`, `amaiera_data`) VALUES
-(1, '2025/2026', '2026-03-12', '2026-03-12');
+INSERT INTO `denboraldia` (`denboraldia_kod`, `izena`, `hasiera_data`, `amaiera_data`, `aktiboa`, `amaituta`, `txapelduna`) VALUES
+(1, '2025/2026', '2026-03-12', '2026-03-12', 0, 0, NULL),
+(3, '2026/2027', '2026-09-01', '2027-06-30', 0, 0, NULL),
+(6, '2020/2021', '2020-09-01', '2021-06-30', 0, 0, NULL),
+(8, '2027/2028', '2027-09-01', '2028-06-30', 0, 0, NULL),
+(10, '2024/2025', '2024-09-01', '2025-06-30', 0, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -66,7 +73,49 @@ INSERT INTO `denboraldia_jaurdunaldia` (`denboraldia_kod`, `jaurdunaldi_kod`) VA
 (1, 7),
 (1, 8),
 (1, 9),
-(1, 10);
+(1, 10),
+(3, 11),
+(3, 12),
+(3, 13),
+(3, 14),
+(3, 15),
+(3, 16),
+(3, 17),
+(3, 18),
+(3, 19),
+(3, 20),
+(6, 41),
+(6, 42),
+(6, 43),
+(6, 44),
+(6, 45),
+(6, 46),
+(6, 47),
+(6, 48),
+(6, 49),
+(6, 50),
+(8, 61),
+(8, 62),
+(8, 63),
+(8, 64),
+(8, 65),
+(8, 66),
+(8, 67),
+(8, 68),
+(8, 69),
+(8, 70),
+(8, 71),
+(8, 72),
+(10, 83),
+(10, 84),
+(10, 85),
+(10, 86),
+(10, 87),
+(10, 88),
+(10, 89),
+(10, 90),
+(10, 91),
+(10, 92);
 
 -- --------------------------------------------------------
 
@@ -150,7 +199,49 @@ INSERT INTO `jaurdunaldia` (`jaurdunaldi_kod`, `hasiera_data`, `amaiera_data`) V
 (7, '2026-04-23', '2026-04-23'),
 (8, '2026-04-30', '2026-04-30'),
 (9, '2026-05-07', '2026-05-07'),
-(10, '2026-05-14', '2026-05-14');
+(10, '2026-05-14', '2026-05-14'),
+(11, '2026-04-13', '2026-04-13'),
+(12, '2026-04-20', '2026-04-20'),
+(13, '2026-04-27', '2026-04-27'),
+(14, '2026-05-04', '2026-05-04'),
+(15, '2026-05-11', '2026-05-11'),
+(16, '2026-05-18', '2026-05-18'),
+(17, '2026-05-25', '2026-05-25'),
+(18, '2026-06-01', '2026-06-01'),
+(19, '2026-06-08', '2026-06-08'),
+(20, '2026-06-15', '2026-06-15'),
+(41, '2026-04-13', '2026-04-13'),
+(42, '2026-04-20', '2026-04-20'),
+(43, '2026-04-27', '2026-04-27'),
+(44, '2026-05-04', '2026-05-04'),
+(45, '2026-05-11', '2026-05-11'),
+(46, '2026-05-18', '2026-05-18'),
+(47, '2026-05-25', '2026-05-25'),
+(48, '2026-06-01', '2026-06-01'),
+(49, '2026-06-08', '2026-06-08'),
+(50, '2026-06-15', '2026-06-15'),
+(61, '2026-04-14', '2026-04-14'),
+(62, '2026-04-21', '2026-04-21'),
+(63, '2026-04-28', '2026-04-28'),
+(64, '2026-05-05', '2026-05-05'),
+(65, '2026-05-12', '2026-05-12'),
+(66, '2026-05-19', '2026-05-19'),
+(67, '2026-05-26', '2026-05-26'),
+(68, '2026-06-02', '2026-06-02'),
+(69, '2026-06-09', '2026-06-09'),
+(70, '2026-06-16', '2026-06-16'),
+(71, '2026-06-23', '2026-06-23'),
+(72, '2026-06-30', '2026-06-30'),
+(83, '2026-04-14', '2026-04-14'),
+(84, '2026-04-21', '2026-04-21'),
+(85, '2026-04-28', '2026-04-28'),
+(86, '2026-05-05', '2026-05-05'),
+(87, '2026-05-12', '2026-05-12'),
+(88, '2026-05-19', '2026-05-19'),
+(89, '2026-05-26', '2026-05-26'),
+(90, '2026-06-02', '2026-06-02'),
+(91, '2026-06-09', '2026-06-09'),
+(92, '2026-06-16', '2026-06-16');
 
 -- --------------------------------------------------------
 
@@ -167,88 +258,91 @@ CREATE TABLE `jokalariak` (
   `pisua` decimal(5,2) DEFAULT NULL,
   `altuera` decimal(4,2) DEFAULT NULL,
   `herritartasuna` varchar(50) DEFAULT NULL,
-  `taldea_kod` int(11) DEFAULT NULL
-) ;
+  `taldea_kod` int(11) DEFAULT NULL,
+  `argazkia` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `jokalariak`
 --
 
-INSERT INTO `jokalariak` (`jokalariak_kod`, `izena`, `abizena`, `NAN`, `posizioa`, `pisua`, `altuera`, `herritartasuna`, `taldea_kod`) VALUES
-(1, 'Carlos', 'Etxebarria', NULL, 'Armador', 78.00, 1.82, 'ESP', 1),
-(2, 'Laura', 'Ruiz', '00000002A', 'Opuesta', 70.00, 1.75, 'ESP', 1),
-(3, 'David', 'Goikoetxea', '00000003B', 'Central', 85.00, 1.90, 'ESP', 1),
-(4, 'Sara', 'Arrieta', '00000004C', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 1),
-(5, 'Javier', 'Aguirre', NULL, 'Central', 88.00, 1.92, 'ESP', 1),
-(6, 'Marta', 'Larrinaga', '00000006D', 'Líbero', 65.00, 1.68, 'ESP', 1),
-(7, 'Daniel', 'Zubizarreta', '00000007E', 'Armador', 76.00, 1.80, 'ESP', 1),
-(8, 'Elena', 'Etxeberria', '00000008F', 'Opuesta', 69.00, 1.74, 'ESP', 1),
-(9, 'John', 'Johnson', '00000009G', 'Central', 87.00, 1.91, 'ENG', 1),
-(10, 'Ana', 'Mendizabal', NULL, 'Receptora/Atacante', 67.00, 1.72, 'ESP', 1),
-(11, 'Alejandro', 'Laka', '00000011H', 'Central', 89.00, 1.93, 'ESP', 1),
-(12, 'Cristina', 'Zabaleta', '00000012I', 'Líbero', 64.00, 1.67, 'ESP', 1),
-(13, 'Miguel', 'Salazar', '00000013J', 'Armador', 77.00, 1.81, 'ESP', 2),
-(14, 'Paula', 'Iglesias', '00000014K', 'Opuesta', 71.00, 1.76, 'ESP', 2),
-(15, 'Raúl', 'Bilbao', NULL, 'Central', 86.00, 1.89, 'ESP', 2),
-(16, 'Isabel', 'Goitia', '00000016L', 'Receptora/Atacante', 66.00, 1.71, 'ESP', 2),
-(17, 'Sergio', 'Etxaniz', '00000017M', 'Central', 90.00, 1.94, 'ESP', 2),
-(18, 'Lucía', 'Urkijo', '00000018N', 'Líbero', 63.00, 1.66, 'ESP', 2),
-(19, 'Fernando', 'Mendizabal', '00000019O', 'Armador', 75.00, 1.79, 'ESP', 2),
-(20, 'Carmen', 'Aranburu', '00000020P', 'Opuesta', 70.00, 1.75, 'ESP', 2),
-(21, 'Adrián', 'Zuloaga', '00000021Q', 'Central', 88.00, 1.92, 'ESP', 2),
-(22, 'Claudia', 'Altuna', '00000022R', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 2),
-(23, 'Rubén', 'Aristi', '00000023S', 'Central', 91.00, 1.95, 'ESP', 2),
-(24, 'Sandra', 'Zubieta', '00000024T', 'Líbero', 65.00, 1.68, 'ESP', 2),
-(25, 'Marcos', 'Aretxaga', '00000025U', 'Armador', 76.00, 1.80, 'ESP', 3),
-(26, 'Patricia', 'Mendieta', '00000026V', 'Opuesta', 72.00, 1.77, 'ESP', 3),
-(27, 'Morlesin', 'Popov', '00000027W', 'Central', 87.00, 1.91, 'ESP', 3),
-(28, 'Andrea', 'Etxeondo', '00000028X', 'Receptora/Atacante', 69.00, 1.74, 'ESP', 3),
-(29, 'Álvaro', 'Altuna', '00000029Y', 'Central', 90.00, 1.94, 'ESP', 3),
-(30, 'Eva', 'Urresti', '00000030Z', 'Líbero', 64.00, 1.67, 'ESP', 3),
-(31, 'Roberto', 'Bilbao', '00000031A', 'Armador', 78.00, 1.83, 'ESP', 3),
-(32, 'María', 'Zuloaga', '00000032B', 'Opuesta', 71.00, 1.76, 'ESP', 3),
-(33, 'Luis', 'Lertxundi', '00000033C', 'Central', 88.00, 1.92, 'ESP', 3),
-(34, 'Natalia', 'Goiko', '00000034D', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 3),
-(35, 'Diego', 'Aramendi', '00000035E', 'Central', 89.00, 1.93, 'ESP', 3),
-(36, 'Beatriz', 'Zubia', '00000036F', 'Líbero', 66.00, 1.69, 'ESP', 3),
-(37, 'Jonathan', 'Puccini', '00000037G', 'Armador', 79.00, 1.84, 'ITA', 4),
-(38, 'Rosa', 'Santisteban', '00000038H', 'Opuesta', 72.00, 1.77, 'ESP', 4),
-(39, 'Francisco', 'Zabala', '00000039I', 'Central', 87.00, 1.91, 'ESP', 4),
-(40, 'Silvia', 'Kortazar', '00000040J', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 4),
-(41, 'José', 'Uranga', '00000041K', 'Central', 90.00, 1.94, 'ESP', 4),
-(42, 'Teresa', 'Eguren', '00000042L', 'Líbero', 65.00, 1.68, 'ESP', 4),
-(43, 'Juan', 'Goiko', '00000043M', 'Armador', 77.00, 1.81, 'ESP', 4),
-(44, 'Raquel', 'Zarate', '00000044N', 'Opuesta', 70.00, 1.75, 'ESP', 4),
-(45, 'Pedro', 'Lopez', '00000045O', 'Central', 89.00, 1.93, 'ESP', 4),
-(46, 'Nuria', 'Elosegi', '00000046P', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 4),
-(47, 'Antonio', 'Berasategi', '00000047Q', 'Central', 91.00, 1.95, 'ESP', 4),
-(48, 'Inés', 'Zubiri', '00000048R', 'Líbero', 64.00, 1.67, 'ESP', 4),
-(49, 'Víctor', 'Bilbao', '00000049S', 'Armador', 78.00, 1.82, 'ESP', 5),
-(50, 'Concha', 'Aranburu', '00000050T', 'Opuesta', 71.00, 1.76, 'ESP', 5),
-(51, 'Ramón', 'Etxeberria', '00000051U', 'Central', 90.00, 1.94, 'ESP', 5),
-(52, 'Lourdes', 'Zubizarreta', '00000052V', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 5),
-(53, 'Alberto', 'Goitia', '00000053W', 'Central', 88.00, 1.92, 'ESP', 5),
-(54, 'Angela', 'Zabaleta', '00000054X', 'Líbero', 65.00, 1.68, 'ESP', 5),
-(55, 'Enrique', 'Zubia', '00000055Y', 'Armador', 76.00, 1.80, 'ESP', 5),
-(56, 'Mónica', 'Odriozola', '00000056Z', 'Opuesta', 72.00, 1.77, 'ESP', 5),
-(57, 'Joaquín', 'Zuloaga', '00000057A', 'Central', 89.00, 1.93, 'ESP', 5),
-(58, 'Lorena', 'Arregi', '00000058B', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 5),
-(59, 'Ricardo', 'Lertxundi', '00000059C', 'Central', 91.00, 1.95, 'ESP', 5),
-(60, 'Esther', 'Goiko', '00000060D', 'Líbero', 64.00, 1.67, 'ESP', 5),
-(61, 'Aitor', 'Arrieta', '00000061E', 'Armador', 77.00, 1.81, 'ESP', 6),
-(62, 'Nerea', 'Bilbao', '00000062F', 'Opuesta', 71.00, 1.76, 'ESP', 6),
-(63, 'Iker', 'Mendieta', '00000063G', 'Central', 88.00, 1.92, 'ESP', 6),
-(64, 'Maialen', 'Lazkano', '00000064H', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 6),
-(65, 'Unai', 'Etxaniz', '00000065I', 'Central', 90.00, 1.94, 'ESP', 6),
-(66, 'Ane', 'Iparragirre', '00000066J', 'Líbero', 65.00, 1.68, 'ESP', 6),
-(67, 'Jon', 'Aramendi', '00000067K', 'Armador', 79.00, 1.84, 'ESP', 6),
-(68, 'Leire', 'Ezkurdia', '00000068L', 'Opuesta', 70.00, 1.75, 'ESP', 6),
-(69, 'Ander', 'Santamaria', '00000069M', 'Central', 87.00, 1.91, 'ESP', 6),
-(70, 'Irati', 'Goienola', '00000070N', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 6),
-(71, 'Mikel', 'Zabala', '00000071O', 'Central', 91.00, 1.95, 'ESP', 6),
-(72, 'Oihana', 'Altube', '00000072P', 'Líbero', 64.00, 1.67, 'ESP', 6),
-(73, 'Urtzi', 'Estevez', NULL, 'Libero', 80.00, 1.78, NULL, 4),
-(74, 'Ekaitz', 'Miguel', '79113972K', 'Libero', 78.00, 1.75, 'Bilbao', 2);
+INSERT INTO `jokalariak` (`jokalariak_kod`, `izena`, `abizena`, `NAN`, `posizioa`, `pisua`, `altuera`, `herritartasuna`, `taldea_kod`, `argazkia`) VALUES
+(1, 'Carlos', 'Etxebarria', NULL, 'Armador', 78.00, 1.82, 'ESP', 1, NULL),
+(2, 'Laura', 'Ruiz', '00000002A', 'Opuesta', 70.00, 1.75, 'ESP', 1, NULL),
+(3, 'David', 'Goikoetxea', '00000003B', 'Central', 85.00, 1.90, 'ESP', 3, NULL),
+(4, 'Sara', 'Arrieta', '00000004C', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 1, NULL),
+(5, 'Javier', 'Aguirre', NULL, 'Central', 88.00, 1.92, 'ESP', 4, NULL),
+(6, 'Marta', 'Larrinaga', '00000006D', 'Líbero', 65.00, 1.68, 'ESP', 1, NULL),
+(7, 'Daniel', 'Zubizarreta', '00000007E', 'Armador', 76.00, 1.80, 'ESP', 1, NULL),
+(8, 'Elena', 'Etxeberria', '00000008F', 'Opuesta', 69.00, 1.74, 'ESP', 1, NULL),
+(9, 'John', 'Johnson', '00000009G', 'Central', 87.00, 1.91, 'ENG', 1, NULL),
+(10, 'Ana', 'Mendizabal', NULL, 'Receptora/Atacante', 67.00, 1.72, 'ESP', 1, NULL),
+(11, 'Alejandro', 'Laka', '00000011H', 'Central', 89.00, 1.93, 'ESP', 1, NULL),
+(12, 'Cristina', 'Zabaleta', '00000012I', 'Líbero', 64.00, 1.67, 'ESP', 1, NULL),
+(13, 'Miguel', 'Salazar', '00000013J', 'Armador', 77.00, 1.81, 'ESP', 2, NULL),
+(14, 'Paula', 'Iglesias', '00000014K', 'Opuesta', 71.00, 1.76, 'ESP', 2, NULL),
+(15, 'Raúl', 'Bilbao', NULL, 'Central', 86.00, 1.89, 'ESP', 2, NULL),
+(16, 'Isabel', 'Goitia', '00000016L', 'Receptora/Atacante', 66.00, 1.71, 'ESP', 2, NULL),
+(17, 'Sergio', 'Etxaniz', '00000017M', 'Central', 90.00, 1.94, 'ESP', 2, NULL),
+(18, 'Lucía', 'Urkijo', '00000018N', 'Líbero', 63.00, 1.66, 'ESP', 2, NULL),
+(19, 'Fernando', 'Mendizabal', '00000019O', 'Armador', 75.00, 1.79, 'ESP', 2, NULL),
+(20, 'Carmen', 'Aranburu', '00000020P', 'Opuesta', 70.00, 1.75, 'ESP', 2, NULL),
+(21, 'Adrián', 'Zuloaga', '00000021Q', 'Central', 88.00, 1.92, 'ESP', 2, NULL),
+(22, 'Claudia', 'Altuna', '00000022R', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 2, NULL),
+(23, 'Rubén', 'Aristi', '00000023S', 'Central', 91.00, 1.95, 'ESP', 2, NULL),
+(24, 'Sandra', 'Zubieta', '00000024T', 'Líbero', 65.00, 1.68, 'ESP', 2, NULL),
+(25, 'Marcos', 'Aretxaga', '00000025U', 'Armador', 76.00, 1.80, 'ESP', 3, NULL),
+(26, 'Patricia', 'Mendieta', '00000026V', 'Opuesta', 72.00, 1.77, 'ESP', 3, NULL),
+(27, 'Morlesin', 'Popov', '00000027W', 'Central', 87.00, 1.91, 'ESP', 3, NULL),
+(28, 'Andrea', 'Etxeondo', '00000028X', 'Receptora/Atacante', 69.00, 1.74, 'ESP', 3, NULL),
+(29, 'Álvaro', 'Altuna', '00000029Y', 'Central', 90.00, 1.94, 'ESP', 3, NULL),
+(30, 'Eva', 'Urresti', '00000030Z', 'Líbero', 64.00, 1.67, 'ESP', 3, NULL),
+(31, 'Roberto', 'Bilbao', '00000031A', 'Armador', 78.00, 1.83, 'ESP', 3, NULL),
+(32, 'María', 'Zuloaga', '00000032B', 'Opuesta', 71.00, 1.76, 'ESP', 3, NULL),
+(33, 'Luis', 'Lertxundi', '00000033C', 'Central', 88.00, 1.92, 'ESP', 3, NULL),
+(34, 'Natalia', 'Goiko', '00000034D', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 3, NULL),
+(35, 'Diego', 'Aramendi', '00000035E', 'Central', 89.00, 1.93, 'ESP', 3, NULL),
+(36, 'Beatriz', 'Zubia', '00000036F', 'Líbero', 66.00, 1.69, 'ESP', 3, NULL),
+(37, 'Jonathan', 'Puccini', '00000037G', 'Armador', 79.00, 1.84, 'ITA', 4, NULL),
+(38, 'Rosa', 'Santisteban', '00000038H', 'Opuesta', 72.00, 1.77, 'ESP', 4, NULL),
+(39, 'Francisco', 'Zabala', '00000039I', 'Central', 87.00, 1.91, 'ESP', 4, NULL),
+(40, 'Silvia', 'Kortazar', '00000040J', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 4, NULL),
+(41, 'José', 'Uranga', '00000041K', 'Central', 90.00, 1.94, 'ESP', 4, NULL),
+(42, 'Teresa', 'Eguren', '00000042L', 'Líbero', 65.00, 1.68, 'ESP', 4, NULL),
+(43, 'Juan', 'Goiko', '00000043M', 'Armador', 77.00, 1.81, 'ESP', 4, NULL),
+(44, 'Raquel', 'Zarate', '00000044N', 'Opuesta', 70.00, 1.75, 'ESP', 4, NULL),
+(45, 'Pedro', 'Lopez', '00000045O', 'Central', 89.00, 1.93, 'ESP', 4, NULL),
+(46, 'Nuria', 'Elosegi', '00000046P', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 4, NULL),
+(47, 'Antonio', 'Berasategi', '00000047Q', 'Central', 91.00, 1.95, 'ESP', 4, NULL),
+(48, 'Inés', 'Zubiri', '00000048R', 'Líbero', 64.00, 1.67, 'ESP', 4, NULL),
+(49, 'Víctor', 'Bilbao', '00000049S', 'Armador', 78.00, 1.82, 'ESP', 5, NULL),
+(50, 'Concha', 'Aranburu', '00000050T', 'Opuesta', 71.00, 1.76, 'ESP', 5, NULL),
+(51, 'Ramón', 'Etxeberria', '00000051U', 'Central', 90.00, 1.94, 'ESP', 5, NULL),
+(52, 'Lourdes', 'Zubizarreta', '00000052V', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 5, NULL),
+(53, 'Alberto', 'Goitia', '00000053W', 'Central', 88.00, 1.92, 'ESP', 5, NULL),
+(54, 'Angela', 'Zabaleta', '00000054X', 'Líbero', 65.00, 1.68, 'ESP', 5, NULL),
+(55, 'Enrique', 'Zubia', '00000055Y', 'Armador', 76.00, 1.80, 'ESP', 5, NULL),
+(56, 'Mónica', 'Odriozola', '00000056Z', 'Opuesta', 72.00, 1.77, 'ESP', 5, NULL),
+(57, 'Joaquín', 'Zuloaga', '00000057A', 'Central', 89.00, 1.93, 'ESP', 5, NULL),
+(58, 'Lorena', 'Arregi', '00000058B', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 5, NULL),
+(59, 'Ricardo', 'Lertxundi', '00000059C', 'Central', 91.00, 1.95, 'ESP', 5, NULL),
+(60, 'Esther', 'Goiko', '00000060D', 'Líbero', 64.00, 1.67, 'ESP', 5, NULL),
+(61, 'Aitor', 'Arrieta', '00000061E', 'Armador', 77.00, 1.81, 'ESP', 6, NULL),
+(62, 'Nerea', 'Bilbao', '00000062F', 'Opuesta', 71.00, 1.76, 'ESP', 6, NULL),
+(63, 'Iker', 'Mendieta', '00000063G', 'Central', 88.00, 1.92, 'ESP', 6, NULL),
+(64, 'Maialen', 'Lazkano', '00000064H', 'Receptora/Atacante', 68.00, 1.73, 'ESP', 6, NULL),
+(65, 'Unai', 'Etxaniz', '00000065I', 'Central', 90.00, 1.94, 'ESP', 6, NULL),
+(66, 'Ane', 'Iparragirre', '00000066J', 'Líbero', 65.00, 1.68, 'ESP', 6, NULL),
+(67, 'Jon', 'Aramendi', '00000067K', 'Armador', 79.00, 1.84, 'ESP', 6, NULL),
+(68, 'Leire', 'Ezkurdia', '00000068L', 'Opuesta', 70.00, 1.75, 'ESP', 6, NULL),
+(69, 'Ander', 'Santamaria', '00000069M', 'Central', 87.00, 1.91, 'ESP', 6, NULL),
+(70, 'Irati', 'Goienola', '00000070N', 'Receptora/Atacante', 67.00, 1.72, 'ESP', 6, NULL),
+(71, 'Mikel', 'Zabala', '00000071O', 'Central', 91.00, 1.95, 'ESP', 6, NULL),
+(72, 'Oihana', 'Altube', '00000072P', 'Líbero', 64.00, 1.67, 'ESP', 6, NULL),
+(73, 'Urtzi', 'Estevez', NULL, 'Libero', 80.00, 1.78, NULL, 4, NULL),
+(74, 'Ekaitz', 'Miguel', '79113972K', 'Libero', 78.00, 1.75, 'Bilbao', 2, NULL),
+(76, 'Gorka', 'Rodriguez', '21470124E', 'Libero', 80.00, 1.80, 'Espainia', 2, NULL),
+(77, 'Aitzol', 'Garcia', '21412411E', 'Libero', 120.00, 1.90, 'Espainia', 1, 'images/Jugadores/jug_1776077549645.png');
 
 --
 -- Disparadores `jokalariak`
@@ -368,6 +462,17 @@ CREATE TABLE `partida` (
   `epailea_kod` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `partida`
+--
+
+INSERT INTO `partida` (`partida_kod`, `data`, `ordua`, `emaitza`, `zigorrak`, `txartelak`, `epailea_kod`) VALUES
+(5, '2026-04-13', '12:40:00', '1-3', 0, 0, NULL),
+(6, '2026-04-13', '12:41:00', '1-3', 0, 0, NULL),
+(8, '2026-04-14', '10:13:00', '1-3', 0, 0, NULL),
+(9, '2026-04-14', '12:50:00', '1-3', 0, 0, NULL),
+(10, '2026-04-16', '10:40:00', '3-1', 0, 0, NULL);
+
 -- --------------------------------------------------------
 
 --
@@ -378,6 +483,17 @@ CREATE TABLE `partida_jaurdunaldia` (
   `partida_kod` int(11) NOT NULL,
   `jaurdunaldi_kod` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `partida_jaurdunaldia`
+--
+
+INSERT INTO `partida_jaurdunaldia` (`partida_kod`, `jaurdunaldi_kod`) VALUES
+(5, 1),
+(6, 18),
+(8, 61),
+(9, 83),
+(10, 45);
 
 -- --------------------------------------------------------
 
@@ -429,6 +545,22 @@ CREATE TABLE `taldea_partida` (
   `taldea_kod` int(11) NOT NULL,
   `partida_kod` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `taldea_partida`
+--
+
+INSERT INTO `taldea_partida` (`taldea_kod`, `partida_kod`) VALUES
+(1, 5),
+(1, 6),
+(1, 8),
+(1, 9),
+(1, 10),
+(2, 8),
+(3, 5),
+(3, 6),
+(3, 10),
+(6, 9);
 
 -- --------------------------------------------------------
 
@@ -560,7 +692,7 @@ ALTER TABLE `zelaia`
 -- AUTO_INCREMENT de la tabla `denboraldia`
 --
 ALTER TABLE `denboraldia`
-  MODIFY `denboraldia_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `denboraldia_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `entrenatzailea`
@@ -578,25 +710,25 @@ ALTER TABLE `epailea`
 -- AUTO_INCREMENT de la tabla `jaurdunaldia`
 --
 ALTER TABLE `jaurdunaldia`
-  MODIFY `jaurdunaldi_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `jaurdunaldi_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=93;
 
 --
 -- AUTO_INCREMENT de la tabla `jokalariak`
 --
 ALTER TABLE `jokalariak`
-  MODIFY `jokalariak_kod` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `jokalariak_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
 
 --
 -- AUTO_INCREMENT de la tabla `partida`
 --
 ALTER TABLE `partida`
-  MODIFY `partida_kod` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `partida_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `taldea`
 --
 ALTER TABLE `taldea`
-  MODIFY `taldea_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `taldea_kod` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `zelaia`
